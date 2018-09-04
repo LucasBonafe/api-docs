@@ -1,0 +1,879 @@
+FORMAT: 1A
+HOST: http://tiendanube.apiblueprint.org/
+
+# Nuvem Shop / Tienda Nube API
+
+This is the official documentation for the Nuvem Shop / Tienda Nube public API, and it will show you how to use our API to authenticate, make requests, and retrieve data.
+
+>**Disclaimer**: Due to high volume of applications and themes we're receiving to be published in our AppStore and ThemeStore, our response time have become very high. For this reason, we're building a new team that will give you support exclusively, with the sole purpose of helping you bring your service to our customers. In the meantime, you can design applications and themes, and offer them to your customers individually (without publishing them in our site), but with full 100% access to the functionalities offered by Tienda Nube / Nuvem Shop.
+
+## Getting Started
+
+Before you start to code your app integration, you will need to:
+
+1. Sign-up for a partner account at [Nuvem Shop](http://www.nuvemshop.com.br/parceiros) or [Tienda Nube](http://www.tiendanube.com/partners).
+
+2. Once inside your partner's panel, go to the _Apps_ section and create your app in order to get your credentials.
+
+3. Read up on the [authentication](https://tiendanube.docs.apiary.io/#introduction/authentication) to learn how to authenticate and authorize your requests.
+
+4. Read the API docs of the desired resources to learn how to retrieve and manipulate the available data.
+
+## The Basics
+
+This API adheres to the [REST](https://en.wikipedia.org/wiki/Representational_State_Transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
+
+The whole communication with the API is made through HTTP requests, using headers to specify and retrieve metadata and [JSON](https://www.json.org/) as the content format.
+
+Detailed here is some useful information before you start making requests to the API, like URLs, mandatory headers, the available HTTP methods and typical HTTP status codes.
+
+### Base URL
+
+The API is available under the two following URLs and there is no difference between them, so you can choose either one:
+
+* `https://api.nuvemshop.com.br`
+* `https://api.tiendanube.com`
+
+The path is prefixed with the store id and the API version, which is currently _v1_, so if we change the API in backward-incompatible ways, we'll bump the version marker and maintain stable support for the old URLs.
+
+Finally, **the base URL must be suffixed with the requested store ID**, so if you want to access the store with id _123456_ via the API the URL will be `https://api.nuvemshop.com.br/v1/123456` or `https://api.tiendanube.com/v1/123456`.
+
+>**Note**: The API is only available over SSL, so you have to specify the protocol (HTTPS) in all URLs.
+
+### Allowed HTTP Methods
+
+| Method | Description |
+| --- | --- |
+|`GET`| Used to get information about a specific resource. |
+|`POST`| Used to create a new resource object. |
+|`PUT`| Used to update/replace a resource object. |
+|`DELETE`| Used to delete resource objects. |
+|`HEAD`| Used to retrieve the headers of a resource. |
+
+>**Note**: For PUT requests with no body attribute, be sure to set the Content-Length header to zero.
+
+### Typical Server Responses
+
+| Code| Description |
+| --- | --- |
+|`200`| Success. Request completed. |
+|`201`| Success. New resource created. |
+|`204`| Success. No content to return. Only the status code returns. |
+|`400`| Bad Request - [The request could not be parsed](https://tiendanube.docs.apiary.io/#introduction/error-handling/client-errors). |
+|`401`| Unauthorized - User is not logged in, [could not be authenticated](https://tiendanube.docs.apiary.io/#introduction/authentication). |
+|`403`| Forbidden - Cannot access resource. |
+|`404`| Not Found - Resource doesn't exist. |
+|`409`| Conflict - Discord with state of the resource on server. Can occur with too many PUT requests. |
+|`422`| Unprocessable Entity - [Invalid fields sent](https://tiendanube.docs.apiary.io/#introduction/error-handling/client-errors). |
+|`429`| Too Many Requests - [API rate limits exceeded](https://tiendanube.docs.apiary.io/#introduction/usage-limits). |
+|`500`| [Internal Server Error](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
+|`502`| [Bad gateway](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
+|`503`| [Service unavailable](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
+|`504`| [Gateway timeout](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
+
+### Pagination
+
+Requests that return multiple items (also know as Collections) will be paginated to 30 items by default. 
+
+You can specify further pages with the `page` parameter and also set a custom page size up to 200 with the `per_page` parameter using a query string appended to the URL, like the following:
+* `https://api.tiendanube.com/v1/123456/products?page=2&per_page=100`
+
+To check the total count of the results you can use the `X-Total-Count` header that will be returned in every collection resource request.
+
+To check the next and previous links for pagination you can use the `Link` header:
+
+```
+    Link: <https://api.tiendanube.com/v1/123456/products?page=3&per_page=100>; rel="next", 
+    <https://api.tiendanube.com/v1/123456/products?page=50&per_page=100>; rel="last"
+```
+
+The possible `rel` values are:
+
+* **next**: Shows the URL of the immediate next page of results.
+* **last**: Shows the URL of the last page of results.
+* **first**: Shows the URL of the first page of results.
+* **prev**: Shows the URL of the immediate previous page of results.
+
+>**Note**: The page numbering is 1-based and ommiting the page parameter will return the first page.
+
+## Authentication
+
+We follow the OAuth 2 framework for letting users authorize their applications to use Nuvem Shop / Tienda Nube on their own.
+
+We provide authorization and user authentication by a restricted form of OAuth 2. At a glance:
+* The only grant type we support is the "authorization code".
+* Our access tokens don't expire. They become invalid only after you get a new one, or if the user uninstalls your app.
+* Along with the access token we provide a `user_id`, which is the ID of the store. **You need the user_id for making requests to our API**. It is also useful for authenticating app users on your website (see [User Authentication](https://tiendanube.docs.apiary.io/#introduction/authentication/user-authentication)).
+
+### Introduction
+
+When creating an app, you will have to select the scopes it needs and set a redirection URL. The scopes specify the resources for which the app is asking authorization of its users (see [Scopes](https://tiendanube.docs.apiary.io/#introduction/authentication/scopes)). The redirection URL is used as part of the authorization flow (see [Authorization Flow](https://tiendanube.docs.apiary.io/#introduction/authentication/authorization-flow)).
+
+### Authorization Flow
+
+The authorization flow is as follows:
+1. Users, from their TiendaNube/NuvemShop admin shop, select your app to install it. Or, alternatively, they go to `https://www.tiendanube.com/apps/(app_id)/authorize` (if they are not logged in, they will be prompted to do so).
+2. Users are then redirected to a website where they have to authorize the scopes your app needs (if they have already done this, the step is skipped).
+3. Finally, users are redirected to your app's redirection URL with an authorization code.
+4. Using your app's credentials and the authorization code, you can obtain an access token by making a POST request to `https://www.tiendanube.com/apps/authorize/token`. (Don't forget to also send `grant_type=authorization_code`, see the example below).
+
+> **Note**: Any of these URLs in the tiendanube.com domain can be replaced for identical ones in the nuvemshop.com.br domain or vice versa.
+
+#### Example:
+
+* If your app's data is:
+    * store_id = 123
+    * redirection URL = `https://www.example.com/`
+    * scopes = `read_orders`, `write_products`
+    * client_secret = abcdef
+
+The user then follows these steps:
+1. User with ID 789 goes to `https://www.tiendanube.com/apps/123/authorize?state=csrf-code`
+2. User accepts scopes.
+3. User gets redirected to `https://www.example.com/?code=xyz&state=csrf-code`
+4. Then you POST:
+`curl https://www.tiendanube.com/apps/authorize/token --data 'client_id=123&client_secret=abcdef&grant_type=authorization_code&code=xyz'`
+
+Finally, you receive the following information:
+```
+{
+       "access_token":"61181d08b7e328d256736hdcb671c3ce50b8af5",
+       "token_type":"bearer",
+       "scope":"read_orders,write_products",
+       "user_id":"789"
+}
+```
+
+### Scopes
+
+Apps should only ask for the access scopes they need. If an app only needs to read products, it should only ask for the `read_products` scope.
+
+>**Note**: If you ask for any write scope, the read scope is implied.
+
+>**Note**: As [Webhooks](https://github.com/TiendaNube/api-docs/blob/master/resources/webhook.md) rely on other resources, you will only be able to register webhooks for the resources you were granted permission to use.
+
+The available `scopes` are:
+* `read_content` / `write_content`
+    * Page
+* `read_products` / `write_products`
+    * Product
+    * Product Variant
+    * Product Image
+    * Category
+* `read_customers` / `write_customers`
+    * Customer
+* `read_orders` / `write_orders`
+    * Order
+* `read_coupons` / `write_coupons`
+    * Coupon
+* `write_scripts`
+    * Script
+
+### User Authentication
+
+Should you need your app's users to be able to sign-in on your website, you can reuse the Authorization flow for this purpose:
+* The login button should be a link to: https://www.tiendanube.com/apps/(app_id)/authorize
+* You can sign-in the user with the ID you receive with the new access token.
+>**Note**: We [recommend](https://tools.ietf.org/html/rfc6749#section-10.12) you add a `state` parameter for CSRF protection (e.g. a hash of the session cookie), and check it after the redirection.
+
+### Identify Your App
+
+In every API request you _must_ include a `User-Agent` header with the name of your application and a link to it, or your email address so we can get in touch with you. Here are some examples:
+* `User-Agent: Super app (http://superapp.com/contact)`
+* `User-Agent: Awesome app (awesome@app.com)`
+>**Note**: If you don't supply this header, you will get a `400 Bad Request` response.
+
+## Error Handling
+
+### JSON
+
+All data is sent and received as JSON. Our format is to have no root element and we use snake_case to describe attribute keys. This means that you have to send `Content-Type: application/json; charset=utf-8` when POSTing or PUTing data into Tienda Nube/Nuvem Shop.
+
+>**Note**: You will receive a `415 Unsupported Media Type` response code if you leave out the Content-Type header.
+
+### Client Errors
+
+These are the possible types of client errors on API calls that receive request bodies:
+
+* Sending invalid JSON will result in a `400 Bad Request` response.
+```
+HTTP/1.1 400 Bad Request
+Content-Length: 34
+{"error": "Problems parsing JSON"}
+```
+
+* Sending invalid fields will result in a `422 Unprocessable Entity` response.
+```
+HTTP/1.1 422 Unprocessable Entity
+Content-Length: 47
+{
+    "src": [
+        "can't be blank"
+    ]
+}
+```
+
+### Server Errors
+
+If Nuvem Shop/Tienda Nube is having trouble, you might see a 5xx error. `500 Internal Server Error` means that the app is entirely down, but you might also see `502 Bad Gateway`, `503 Service Unavailable`, or `504 Gateway Timeout`. It's your responsibility in all of these cases to retry your request later.
+
+## Usage Limits
+
+You can perform up to 500 requests per 5 minutes period from the same app to the same store. If you exceed this limit, you'll get a `429 Too Many Requests` response for subsequent requests. We use the following headers to provide information:
+
+* `X-Rate-Limit-Limit`: Total requests that con be done in a given period.
+* `X-Rate-Limit-Remaining`: Remaining requests in the current period.
+* `X-Rate-Limit-Reset`: Remaining seconds for the start of the next period.
+
+## Front-end Integration
+
+When using scripts to integrate your app with the storefront, you may want to bind yourself to certain events or access related objects.
+
+While support for this is still being improved, there is one single event you may bind yourself to: `LS.registerOnChangeVariant(callback)` where callback is a function that receives a single argument, a variant, that contains information about the chosen product variant. In particular, `variant.element` contains a string detailing a jQuery selector that you may use in order to obtain a container for the chosen variant's form; this is important when working with themes that have a "quick shop" feature, such as LinkedMan or LinkedWoman, as there may be more than one product form present in a page.
+
+## Suspension of API access due to lack of payment
+
+Being a monthly subscription service, it's possible that a store will not renew its service. In this case, the store will go offline and the API will be inaccessible. The API will also be inaccessible if the app has a recurring price and it's not paid in time.
+
+In either case, all API calls will return a `402 Payment Required` response, Scripts will not be included and Webhooks will not be called. Please make sure you handle this error code to notify the user that he needs to resume his payment instead of displaying a generic server error.
+
+Once the required payment is made, the API becomes accessible again.
+
+>**Note**: If your app needs to know when access to the API is suspended or resumed (because you may have missed a webhook and want to do a full resync, for example), you can register to the app/suspended and app/resumed events using a Webhook.
+
+# Group Store
+
+The Store resource contains general settings and information about a Tienda Nube/Nuvem Shop's store.
+
+## Store Attributes [/store]
+
++ Attributes
+    + id (number) - The unique numeric identifier for the Store
+    + name (string) - List of the names of the Store, in every language supported by the store
+    + description (string) - List of the descriptions of the Store, in every language supported by the store
+    + type (string) - Store type. Examples are "clothing", "sports", "electronic"
+    + email (string) - Store owner's e-mail
+    + logo (string) - Store logo URL, starting with // (or null if it has no logo)
+    + contact_email (string) - Store's contact e-mail
+    + facebook (string) - Store's Facebook URL
+    + twitter (string) - Store's Twitter URL
+    + google_plus (string) - Store's G+ URL
+    + instagram (string) - Store's Instagram URL
+    + pinterest (string) - Store's Pinterest URL
+    + blog (string) - Store's blog URL
+    + address (string) - Store's address
+    + phone (string) - Store's phone
+    + business_id (string) - Business identifier (different for each country) of the company who owns the store
+    + business_name (string) - Business name of the company who owns the store
+    + business_address (string) - Business address of the company who owns the store
+    + customer_accounts (string) - "optional" if the customer is allowed to checkout as guest. "mandatory" if not.
+    + plan_name (string) - Name of the Tienda Nube/Nuvem Shop's plan the store is on
+    + country (string) - Store's country in ISO 3166-1 format.
+    + languages (string) - Store available languages with its currency and whether or not is active
+    + domains (string) - List of store's domains
+    + original_domain (string) - Original tiendanube.com or nuvemshop.com.br domain for the Store.
+    + current_theme (string) - Store's current theme.
+    + main_language (string) - Store's main language.
+    + main_currency (string) - Store's main currency in ISO 4217 format.
+    + admin_language (string) - Store's admin language
+    + created_at (string) - Date when the Store was created in ISO 8601 format.
+
+### Retrieve the store information [GET /store{?fields}]
+
++ Parameters
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "address": null,
+            "admin_language": "pt",
+            "blog": null,
+            "business_id": null,
+            "business_name": null,
+            "business_address": null,
+            "contact_email": "contact@pokestore.com",
+            "country": "BR",
+            "created_at": "2013-01-01T05:12:51-03:00",
+            "customer_accounts": "optional",
+            "description": {
+                "en": "",
+                "es": "",
+                "pt": ""
+            },
+            "domains": [
+                "www.pokestore.com",
+                "www.another.com"
+            ],
+            "email": "owner@pokestore.com",
+            "facebook": "http://www.facebook.com/pokestore",
+            "google_plus": "http://plus.google.com/+pokestore",
+            "id": 1234,
+            "instagram": "http://www.instagram.com/pokestore",
+            "languages": {
+                "en": {
+                    "currency" : "USD",
+                    "active": true
+                },
+                "es": {
+                    "currency" : "ARS",
+                    "active": false
+                },
+                "pt": {
+                    "currency" : "BRL",
+                    "active": true
+                }
+            },
+            "logo": "//d26lpennugtm8s.cloudfront.net/stores/046/themes/common/logo-ff622335866ee56df3bceed2e9d41469.png",
+            "main_currency": "BRL",
+            "current_theme": "luxury",
+            "main_language": "pt",
+            "name": {
+                "en": "Poké Store",
+                "es": "Poké Tienda",
+                "pt": "Poké Loja"
+            },
+            "original_domain" : "pokeloja.nuvemshop.com.br",
+            "phone": null,
+            "pinterest": "http://www.pinterest.com/pokestore",
+            "plan_name": "Business",
+            "type": null,
+            "twitter": "http://www.twitter.com/pokestore" 
+        }
+
+# Group Product
+
+Work in progress.
+
+## Product
+
+Work in progress.
+
+## Product Variant
+
+Work in progress.
+
+## Product Images
+
+Work in progress.
+
+# Group Category
+
+Work in progress.
+
+# Group Order
+
+Work in progress.
+
+# Group Customer
+
+Work in progress.
+
+# Group Coupons
+
+Work in progress.
+
+# Group Metafields
+
+The metafields are Namespaced Key - Value store for Apps.
+
+The metafields can only be associated with the following entities:
+* Product
+* Product_Variant
+* Category
+* Page
+
+To do that you need to set the `owner_resource` to one of the above, an example would be `owner_resource`='Product'.
+
+An use example would be use it in an app for Bookstores that require associate a book (product) with it's author and genre to provide an advanced search of books by this fields.
+
+### Properties
+
+# Group Script
+
+Work in progress.
+
+The Script resource allows your app to register custom Javascript to be run in the store or in the checkout page. Also, if the user deletes your app, then they will not have to edit their theme to remove your JavaScript. When an app is uninstalled from a store, all of the scripts the app created are automatically removed along with it.
+
+Before you begin, please take into consideration that:
+* You cannot depend on any JavaScript available in the store's theme. Not even jQuery.
+* Other applications may be installed and can include other JavaScript in addition to yours.
+* When we include your script in the store, we will send a `store` parameter with the store id:```<script type="text/javascript" src="http://myapp.com/new.js?store=1234"></script>```
+
+Ideally, your javascript should be inside a closure to avoid any conflict:
+```
+        (function(){
+            // Your JavaScript
+        })();
+```
+
+Use AJAX to load specific configurations for the store. Access your own defined URL with the store ID specified in that URL. Your app will serve those store settings in JSON format, which you can then use in your JavaScript file.
+
+> **Note**: If you are going to use jQuery, you should load it in your JS using `jQuery.noConflict` as some stores already have jQuery in their themes. You should not assume the store has a cutting-edge jQuery version.
+
+Please refer to the following examples:
+```
+        var loadScript = function(url, callback){
+            /*
+                JavaScript that will load the jQuery library on Google's CDN.
+                We recommend this code:
+                http://snipplr.com/view/18756/loadscript/
+                Once the jQuery library is loaded,
+                the callback function will be executed.
+            */
+        };
+        
+        var myAppJavaScript = function($){
+            /*
+                Your app's JavaScript here.
+                $ in this scope references the jQuery object we'll use.
+                Don't use 'jQuery', or 'jQuery191', here. Use the dollar sign
+                that was passed as argument.
+            */
+            $('body').append(
+                "<p>I'm using jQuery version "+$.fn.jquery+'</p>');
+        };
+        
+        // For jQuery version 1.7
+        var target = [1, 7, 0];
+        
+        var current = typeof jQuery === 'undefined' ? [0,0,0] :
+            $.fn.jquery.split('.').map(function(item) {
+                return parseInt(item);
+        });
+        
+        if(current[0]<target[0]||(current[0]==target[0]&&current[1]<target[1]))
+        {
+            loadScript(
+                '//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js',
+                function(){
+                    var jQuery1101 = jQuery.noConflict(true);
+                    myAppJavaScript(jQuery1101);
+                });
+        } else {
+            myAppJavaScript(jQuery);
+        }
+```
+
+## Variables
+
+We make your life easier by providing a Javascript object (called `LS`) with some common variables.
+
+The following are the two `LS` Javascript objects we offer, one for the Store and another for Checkout.
+
+### Store
+
+```
+        var LS = {
+            store : {
+                id : /* Store's id */,
+                url : /* Store's URL */
+            },
+            cart : {
+                subtotal : /* Cart's subtotal in cents */,
+                items : [
+                    /* For every cart item we have */
+                    {
+                        id: /* Product Variant's id */,
+                        name: /* Product Variant's name */,
+                        unit_price: /* Product Variant's price in cents */,
+                        quantity: /* Quantity to be purchased */
+                    }
+                ]
+            },
+            lang : /* Current language's code (e.g. pt_BR) */,
+            currency : {
+                code: /* Current currency in ISO 4217 format */
+                display_short: /*
+                                  Currency format string when the currency
+                                  is not specified.
+                                */
+                display_long: /*
+                                 Currency format string when the currency
+                                 is specified.
+                               */
+                cents_separator: /* Symbol used for separating cents */
+                thousands_separator: /*
+                                        Symbol used for separating
+                                        thousands (could be blank)
+                                      */
+            },
+            country : /* Current currency in ISO 3166-1 format */,
+            customer : /*
+                          Current customer id or null if there is no
+                          logged-in customer.
+                        */,
+            theme : {
+                code: /* Current theme's code */,
+                name: /* Current theme's name */
+            }
+        }
+```
+
+#### Product
+
+When on a `Product` page, the Store `LS` object also has the following:
+
+```
+        LS.product = {
+            id : /* Product's id */,
+            name : /* Product's name */,
+            tags : /* Array of product's tags */
+        };
+        LS.variants = /*
+                        JSON encoded representation
+                        of the product variants
+                       */;
+```
+
+#### Category
+
+When on a `Category` page, the Store `LS` object also has the following:
+
+```
+        LS.category = {
+            id : /* Category's id */,
+            name : /* Category's name */
+        };
+```
+
+### Checkout
+
+```
+        var LS = {
+            store : {
+                id : /* Store's id */,
+                url : /* Store's URL */
+            },
+            cart : {
+                subtotal : /* Cart's subtotal in cents */,
+                items : [
+                    /* For every cart item we have */
+                    {
+                        id: /* Product Variant's id */,
+                        name: /* Product Variant's name */,
+                        unit_price: /* Product Variant's price in cents */,
+                        quantity: /* Quantity to be purchased */
+                    }
+                ]
+            },
+            customer : /* Current customer id or null if there is no logged-in customer */,
+            lang : /* Current language's code (e.g. pt_BR) */,
+            currency : /* Current currency in ISO 4217 format */
+        }
+```
+
+#### Thank You Page
+
+When on the `Thank You` for your order page, the Checkout `LS` object also has the following:
+
+```
+        LS.order = {
+            id : /* Order's id */,
+            number : /* Order's number */,
+            hash : /* Order's hash */,
+            created_at : /* Order's creation date */,
+            coupon : /*
+                        Array of coupon codes that apply to this
+                        order.
+                     */,
+            discount : /* Order's discount in cents */,
+            total : /* Order's total in cents */,
+            total_in_usd : /* Order's total in USD in cents */,
+            gateway : /* Payment Gateway's code */
+        };
+```
+
+## Properties
+
+| Property | Description |
+| --- | --- |
+| `id` | The unique numeric identifier for the Script. |
+| `src` | Specifies the location of the Script. |
+| `event` | DOM event which triggers the loading of the script. Valid values are **onload** (default). |
+| `where` | A comma-separated list of places where the javascript will run. Valid values are **store** (default) or **checkout**. |
+| `created_at` | Date when the Script was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601). |
+| `updated_at` | Date when the Script was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601). |
+
+## Script [/script]
+
+### Retrieve All Scripts [GET /script{?since_id,src,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+
++ Parameters
+    + `since_id` (string, optional) - Restrict results to after the specified ID.
+    + `src` (string, optional) - Show scripts with a given URL.
+    + `created_at_min` (string, optional) - Show Scripts created after date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `created_at_max` (string, optional) - Show Scripts created before date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `updated_at_min` (string, optional) - Show Scripts last updated after date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `updated_at_max` (string, optional) - Show Scripts last updated before date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `page` (string, optional) - Page to show.
+    + `per_page` (string, optional) - Amount of results.
+    + `fields` (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "created_at": "2013-01-03T09:11:51-03:00",
+                "event": "onload",
+                "id": 101,
+                "src": "https://myapp.com/foo.js",
+                "updated_at": "2013-03-11T09:14:11-03:00",
+                "where": "store,checkout"
+            },
+            {
+                "created_at": "2013-04-07T09:11:51-03:00",
+                "event": "onload",
+                "id": 5123,
+                "src": "https://myapp.com/bar.js",
+                "updated_at": "2013-04-08T11:11:51-03:00",
+                "where": "store"
+            },
+            {
+                "created_at": "2013-04-08T12:09:48-03:00",
+                "event": "onload",
+                "id": 6412,
+                "src": "https://myapp.com/yet_another_script.js",
+                "updated_at": "2013-04-08T11:11:53-03:00",
+                "where": "checkout"
+            }
+        ]
+
++ Request
+
+        "since_id": "1234"
+
++ Response 200 (application/json)
+
+        [
+            {
+              "created_at": "2013-04-07T09:11:51-03:00",
+              "event": "onload",
+              "id": 5123,
+              "src": "https://myapp.com/foo.js",
+              "updated_at": "2013-04-08T11:11:51-03:00",
+              "where": "store"
+            },
+            {
+              "created_at": "2013-04-08T12:09:48-03:00",
+              "event": "onload",
+              "id": 6412,
+              "src": "https://myapp.com/bar.js",
+              "updated_at": "2013-04-08T11:11:53-03:00",
+              "where": "checkout"
+            }
+        ]
+
+# Group Webhook
+
+## Webhook
+
+A Webhook is a tool that allows you to receive a notification for a certain event. It allows you to register an http or https URL which will receive the event data, stored in JSON.
+
+Webhooks can be registered for the following events:
+| Category | Events |
+| --- | --- |
+| App | uninstalled/suspended/resumed |
+| Category | created/updated/deleted |
+| Order | created/updated/paid/fulfilled/cancelled |
+| Product | created/updated/deleted |
+| Domain | updated |
+| Theme | updated |
+
+To register for the product created event, for example, you should send `product/created` in the event field.
+
+The `app/suspended` and `app/resumed` events refer to the [suspension of API access due to lack of payment](https://tiendanube.docs.apiary.io/#introduction/suspension-of-api-access-due-to-lack-of-payment).
+
+> **Note**: You are not allowed to use a localhost/tiendanube/nuvemshop domain for webhooks.
+
+## Properties
+
+| Property | Description |
+| --- | --- |
+| `id` | The unique numeric identifier for the webhook. |
+| `url` | The URL where the webhook should send the POST request when the event occurs. |
+| `event` | The event that will trigger the webhook. |
+| `created_at` | Date when the webhook was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). |
+| `updated_at` | Date when the webhook was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601). |
+
+### Verifying A Webhook
+
+Webhooks created through the API can be verified by calculating a digital signature.
+
+Each Webhook request includes a `X-Linkedstore-HMAC-SHA256` header which is generated using the app's secret, along with the data sent in the request.
+
+> **Note**: Some frameworks will change the header to `HTTP_X_LINKEDSTORE_HMAC_SHA256`.
+
+See PHP example below:
+
+```
+<?php
+
+define('APP_SECRET', 'secret');
+
+function verify_webhook($data, $hmac_header) {
+  return $hmac_header == hash_hmac('sha256', $data, APP_SECRET);
+}
+
+$hmac_header = $_SERVER['HTTP_X_LINKEDSTORE_HMAC_SHA256'];
+$data = file_get_contents('php://input');
+$verified = verify_webhook($data, $hmac_header);
+echo 'Webhook verified: ' . var_export($verified, true);
+```
+
+### Parameters
+
+When doing the `POST` request, all webhooks will send the following parameters in JSON format:
+
+* `store_id`: Store from where the event originated.
+* `event`: Event's name.
+    * product/created
+    * product/updated
+    * etc.
+
+Also, every webhook will send custom parameters, as follows:
+
+#### app/uninstalled
+* id: App's id
+
+#### category/created - category/updated - category/deleted
+* id: Category's id
+
+#### order/created - order/updated - order/paid - order/fulfilled - order/cancelled
+* id: Order's id
+
+#### product/created - product/updated - product/deleted
+* id: Product's id
+
+#### domain/updated
+* no additional parameter is sent along with this event. To get the list of domains one may refer to [Store](tiendanube.docs.apiary.io/#reference/store) resources.
+
+#### theme/updated
+* old_theme: Old Theme's code
+* new_theme: New Theme's code
+
+Example webhook content:
+```
+{
+    'store_id':123,
+    'event':'product/created',
+    'id':1948209
+}
+```
+
+### Retry Policies
+A webhook notification expects a 200 status code in `response`. If this does not happen (it gets another response code or no response at all) we will retry to deliver the notification 14 times along the next three days in incremental lapses of time. After this, the notification is lost.
+
+## Webhook [/webhook]
+
+### Retrieve All Webhooks [GET /webhook{?since_id,url,event,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+
++ Parameters
+    + `since_id` (string, optional) - Restrict results to after the specified ID.
+    + `url` (string, optional) - Show webhooks tags with a given URL.
+    + `event` (string, optional) - Show webhooks with a given event.
+    + `created_at_min` (string, optional) - Show Webhooks created after date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `created_at_max` (string, optional) - Show Webhooks created before date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `updated_at_min` (string, optional) - Show Webhooks last updated after date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `updated_at_max` (string, optional) - Show Webhooks last updated before date ([ISO 8601 format](en.wikipedia.org/wiki/ISO_8601)).
+    + `page` (string, optional) - Page to show.
+    + `per_page` (string, optional) - Amount of results.
+    + `fields` (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "created_at": "2013-01-03T09:11:51-03:00",
+                "event": "app/uninstalled",
+                "id": 101,
+                "updated_at": "2013-03-11T09:14:11-03:00",
+                "url": "http://myapp.com/uninstall"
+            },
+            {
+                "created_at": "2013-04-07T09:11:51-03:00",
+                "event": "order/created",
+                "id": 5670,
+                "updated_at": "2013-04-08T11:11:51-03:00",
+                "url": "http://myapp.com/order_created_hook"
+            }
+        ]
+        
++ Request
+
+        "since_id": "1234"
+
++ Response 200 (application/json)
+
+        [
+            {
+                "created_at": "2013-04-07T09:11:51-03:00",
+                "event": "order/created",
+                "id": 5670,
+                "updated_at": "2013-04-08T11:11:51-03:00",
+                "url": "http://myapp.com/order_created_hook"
+            }
+        ]
+
+
+### Retrieve A Single Webhook [GET /webhooks/#{id}{?fields}]
+
++ Parameters
+    + id (number, `5670`) - Store ID? ---TODO---
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        {
+            "created_at": "2013-04-07T09:11:51-03:00",
+            "event": "order/created",
+            "id": 5670,
+            "updated_at": "2013-04-08T11:11:51-03:00",
+            "url": "http://myapp.com/order_created_hook"
+        }
+
+### Create A New Webhook [POST /webhook/{?url,event}]
+
++ Parameters
+    + url (string, `http://myapp.com/product_created_hook`) - Show webhooks tags with a given URL.
+    + event (string, `product/created`) - Show webhooks with a given event.
+
++ Response 201 (application/json)
+
+        {
+            "created_at": "2013-06-01T15:12:15-03:00",
+            "event": "product/created",
+            "id": 8901,
+            "updated_at": "2013-06-01T15:12:15-03:00",
+            "url": "http://myapp.com/product_created_hook"
+        }
+
+### Modify An Existing Webhook [POST /webhooks/#{id}]
+
++ Request (application/json)
+
+        {
+            "created_at": "2013-04-07T09:11:51-03:00",
+            "event": "category/created",
+            "id": 5670,
+            "updated_at": "2013-04-08T11:11:51-03:00",
+            "url": "http://myapp.com/category_created_hook"
+        }
+
++ Response 200
+
+        {
+            "created_at": "2013-04-07T09:11:51-03:00",
+            "event": "category/created",
+            "id": 5670,
+            "updated_at": "2013-06-01T12:11:14-03:00",
+            "url": "http://myapp.com/category_created_hook"
+        }
+
+### Remove An Existing Webhook [DELETE /webhooks/#{id}]
+
++ Response 200
+
+        {}
