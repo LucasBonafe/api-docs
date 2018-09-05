@@ -668,7 +668,7 @@ When on the `Thank You` for your order page, the Checkout `LS` object also has t
 
 # Group Webhook
 
-## Webhook
+## Introduction
 
 A Webhook is a tool that allows you to receive a notification for a certain event. It allows you to register an http or https URL which will receive the event data, stored in JSON.
 
@@ -729,44 +729,92 @@ When doing the `POST` request, all webhooks will send the following parameters i
 
 * `store_id`: Store from where the event originated.
 * `event`: Event's name.
-    * product/created
-    * product/updated
-    * etc.
 
-Also, every webhook will send custom parameters, as follows:
+Also, every webhook will send custom parameters depending on which event creates them, as follows:
 
 #### app/uninstalled
+When an app is uninstalled, the event will generate and forward you a JSON with the following extra parameter:
 * id: App's id
 
+Example webhook content:
+```
+{
+    'store_id':123,
+    'event':'app/uninstalled',
+    'id':1948209
+}
+```
+
 #### category/created - category/updated - category/deleted
+When an app's category is somehow modified, the event will generate and forward you a JSON with the following extra parameter:
 * id: Category's id
 
+Example webhook content:
+```
+{
+    'store_id':354,
+    'event':'category/created',
+    'id':11
+}
+```
+
 #### order/created - order/updated - order/paid - order/fulfilled - order/cancelled
+When an order's status is changed, the event will generate and forward you a JSON with the following extra parameter:
 * id: Order's id
 
+Example webhook content:
+```
+{
+    'store_id':876,
+    'event':'product/created',
+    'id':48708
+}
+```
+
 #### product/created - product/updated - product/deleted
+When an product's status is changed, the event will generate and forward you a JSON with the following extra parameter:
 * id: Product's id
 
+Example webhook content:
+```
+{
+    'store_id':910,
+    'event':'product/created',
+    'id':165
+}
+```
+
 #### domain/updated
+When an app's domain is changed, the event will generate and forward you an empty JSON:
 * no additional parameter is sent along with this event. To get the list of domains one may refer to [Store](tiendanube.docs.apiary.io/#reference/store) resources.
 
+Example webhook content:
+```
+{
+    'store_id':723,
+    'event':'domain/updated',
+}
+```
+
 #### theme/updated
+When an app's theme is changed, the event will generate and forward you a JSON containing the following extra parameters:
 * old_theme: Old Theme's code
 * new_theme: New Theme's code
 
 Example webhook content:
 ```
 {
-    'store_id':123,
-    'event':'product/created',
-    'id':1948209
+    'store_id':821,
+    'event':'theme/updated',
+    'old_theme':7862354
+    'new_theme':9834511
 }
 ```
 
 ### Retry Policies
 A webhook notification expects a 200 status code in `response`. If this does not happen (it gets another response code or no response at all) we will retry to deliver the notification 14 times along the next three days in incremental lapses of time. After this, the notification is lost.
 
-## Webhook [/webhook]
+## Managing Webhooks: Examples and Resources [/webhook]
 
 ### Retrieve All Webhooks [GET /webhook{?since_id,url,event,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
 
