@@ -375,11 +375,240 @@ Work in progress.
 
 Work in progress.
 
+N------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Introduction
+
+A discount coupon is a way for a store to provide discounts for its customers. There are three type of coupons. Percentage, absolute and shipping. The percentage type indicates that the value is a percentage discount. The type absolute indicates that the value is an absolute amount of discount. And finally the type shipping indicates that the discount value is on the shipping.
+
+## Managing Coupons: Examples and Resources [/coupon]
+
++ Attributes
+    + `id` (number) - The unique numeric identifier for the coupon.
+    + `code` (string) - String that identifies the coupon.
+    + `type` (string) - Type of the coupon. Can take the following values: percentage, absolute or shipping.
+    + `valid` (string) - Flag (true or false) that indicates if the coupon is valid or not.
+    + `start_date` (string) - Date from which the coupon is valid.
+    + `end_date` (string) - Date of overdue of the coupon.
+    + `deleted_at` (string) - Date when the coupon was deleted. The value is NULL if the coupon is still valid.
+    + `max_uses` (string) - Max number of times the coupon can be used.
+    + `value` (string) - Value of the discount
+    + `min_price` (string) - Indicates the minimun value of the bill for applying the discount
+    + `categories` (string) - List of [Category](/#reference/category) objects representing the categories of the store where the discount applies.
+
+### Retrieve A List Of All Coupons [GET /coupons/{?min_start_date,min_end_date,max_start_date,max_end_date,valid,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+
++ Parameters
+    + min_start_date (string, optional) - The minimum start_date to filter.
+    + min_end_date (string, optional) - The minimum end_date to filter.
+    + max_start_date (string, optional) - The maximum start_date to filter.
+    + max_end_date (string, optional) - The maximum end_date to filter.
+    + valid (string, optional, `true`) - Flag (true of false) for filtering valid coupons.
+    + created_at_min (string, optional) - Show Products created after date (ISO 8601 format).
+    + created_at_max (string, optional) - Show Products created before date (ISO 8601 format).
+    + updated_at_min (string, optional) - Show Products last updated after date (ISO 8601 format).
+    + updated_at_max (string, optional) - Show Products last updated before date (ISO 8601 format).
+    + page (string, optional) - Page to show.
+    + per_page (number, optional) - Amount of results.
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 32965,
+                "code": "PR2",
+                "type": "percentage",
+                "value": "30.00",
+                "valid": true,
+                "used": 0,
+                "max_uses": 100,
+                "start_date": "2014-05-08",
+                "end_date": "2014-06-08",
+                "min_price": 10,
+                "categories": [
+                    {
+                        "id": 117023,
+                        "name": {
+                            "es": "Oxido N\u00edtrico (NO2)",
+                            "en": "Oxido N\u00edtrico (NO2)"
+                        },
+                        "description": {
+                            "es": "",
+                            "en": ""
+                        },
+                        "handle": {
+                            "es": "oxido-nitrico-no2",
+                            "en": "oxido-nitrico-no2"
+                        },
+                        "parent": null,
+                        "subcategories": [],
+                        "created_at": "2013-03-22T14:40:55+0000",
+                        "updated_at": "2014-05-28T20:07:05+0000"
+                    }
+                ]
+            },
+            {
+                "id": 32966,
+                "code": "PR23",
+                "type": "percentage",
+                "value": "30.00",
+                "valid": true,
+                "used": 0,
+                "max_uses": 100,
+                "start_date": "2014-05-08",
+                "end_date": "2014-06-08",
+                "min_price": 10,
+                "categories": null
+            },
+            {
+                "id": 32964,
+                "code": "PR4",
+                "type": "percentage",
+                "value": "30.00",
+                "valid": true,
+                "used": 0,
+                "max_uses": 100,
+                "start_date": "2014-06-07",
+                "end_date": "2014-06-08",
+                "min_price": 10,
+                "categories": [
+                    {
+                        "id": 117023,
+                        "name": {
+                            "es": "Oxido N\u00edtrico (NO2)",
+                            "en": "Oxido N\u00edtrico (NO2)"
+                        },
+                        "description": {
+                            "es": "",
+                            "en": ""
+                        },
+                        "handle": {
+                            "es": "oxido-nitrico-no2",
+                            "en": "oxido-nitrico-no2"
+                        },
+                        "parent": null,
+                        "subcategories": [],
+                        "created_at": "2013-03-22T14:40:55+0000",
+                        "updated_at": "2014-05-28T20:07:05+0000"
+                    }
+                ]
+            }
+        ]
+
+### Retrieve A Single Coupon [GET /coupons/#{id}]
+
++ Parameters
+    + id (number, `32964`) - The unique numeric identifier for the coupon.
+
++ Response 200 (application/json)
+
+        {
+            "id": 32964,
+            "code": "PR4",
+            "type": "percentage",
+            "value": "30.00",
+            "valid": true,
+            "used": 0,
+            "max_uses": 100,
+            "start_date": "2014-06-07",
+            "end_date": "2014-06-08",
+            "min_price": 10,
+            "categories": [
+                {
+                    "id": 117023,
+                    "name": {
+                        "es": "Oxido N\u00edtrico (NO2)",
+                        "en": "Oxido N\u00edtrico (NO2)"
+                    },
+                    "description": {
+                        "es": "",
+                        "en": ""
+                    },
+                    "handle": {
+                        "es": "oxido-nitrico-no2",
+                        "en": "oxido-nitrico-no2"
+                    },
+                    "parent": null,
+                    "subcategories": [],
+                    "created_at": "2013-03-22T14:40:55+0000",
+                    "updated_at": "2014-05-28T20:07:05+0000"
+                }
+            ]
+        }
+
+### Create A New Coupon [POST /coupons/{code}{?value,fields}]
+
++ Parameters
+    + code (string, required) - Must be unique and can contain only alfanumeric characters.
+    + value (string, optional) - The value is mandatory if the type is percentage or absolute.
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Request (application/json)
+
+        {
+            "code": "test_code",
+            "type": "percentage",
+            "value": "30.00",
+            "max_uses": 100,
+            "min_price": 10,
+            "categories": null,
+            "start_date": "2014-05-08",
+            "end_date": "2014-06-08"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id": 32967,
+            "code": "test_code",
+            "type": "percentage",
+            "value": "30.00",
+            "valid": true,
+            "used": null,
+            "max_uses": 100,
+            "start_date": "2014-05-08",
+            "end_date": "2014-06-08",
+            "min_price": 10,
+            "categories": null
+        }
+
+### Modify An Existing Coupon [PUT /coupons/#{id,code}{?type,value}]
+
++ Parameters
+    + id (number, `32967`)
+    + code (string, `OTRAPRUEBA`)
+    + type (string, `absolute`)
+    + value (number, `50`)
+
++ Response 200 (application/json)
+
+        {
+            "id": 32967,
+            "code": "OTRAPRUEBA",
+            "type": "absolute",
+            "value": 50,
+            "valid": true,
+            "used": 0,
+            "max_uses": 100,
+            "start_date": "2014-05-08",
+            "end_date": "2014-06-08",
+            "min_price": 10,
+            "categories": null
+        }
+
+### Delete A Coupon [DELETE /coupons/#{id}]
+
++ Parameters
+    + id (number, `32967`)
+
++ Response 200 (application/json)
+
+        {
+          
+        }
+
 # Group Metafields
-
-Work in progress.
-
-N--------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Introduction
 
@@ -412,10 +641,10 @@ An example would be to use it in an app for Bookstores that require that you ass
 ### Retrieve A List Of All Metafields [GET /metafields/#{owner_resource}{?owner_id,namespace,key,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
 
 + Parameters
-    + owner_resource (string, `Product`) - Type of entity to which is associated the Metafield.
-    + owner_id (number, optional) - Entity id to which is associated the metaField.
-    + namespace (string, optional) - The namespace where the Metafield was defined.
     + key (string, optional) - Metafield's key.
+    + namespace (string, optional) - The namespace where the Metafield was defined.
+    + owner_id (number, optional) - Entity id to which is associated the metaField.
+    + owner_resource (string, `Product`) - Type of entity to which is associated the Metafield.
     + created_at_min (string, optional, `2013-01-01T00:00:00-03:00`) - Show Products created after date (ISO 8601 format).
     + created_at_max (string, optional) - Show Products created before date (ISO 8601 format).
     + updated_at_min (string, optional) - Show Products last updated after date (ISO 8601 format).
@@ -508,7 +737,7 @@ An example would be to use it in an app for Bookstores that require that you ass
             "updated_at":"2015-01-02T20:32:09+0000"
         }
 
-### Delete An Existing Metafield [DELETE /metafields/#{id}]
+### Delete A Metafield [DELETE /metafields/#{id}]
 
 + Parameters
     + id (number, `13226`) - The unique numeric identifier for the Metafield.
@@ -876,7 +1105,7 @@ When on the `Thank You` for your order page, the Checkout `LS` object also has t
             "where": "store"
         }
 
-### Remove An Existing Script [DELETE /script/#{id}]
+### Remove A Script [DELETE /script/#{id}]
 
 + Response 200 (application/json)
 
@@ -1135,7 +1364,7 @@ A webhook notification expects a 200 status code in `response`. If this does not
             "url": "http://myapp.com/category_created_hook"
         }
 
-### Remove An Existing Webhook [DELETE /webhooks/#{id}]
+### Remove A Webhook [DELETE /webhooks/#{id}]
 
 + Response 200
 
