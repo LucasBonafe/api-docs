@@ -379,6 +379,8 @@ Work in progress.
 
 Work in progress.
 
+N--------------------------------------------------------------------------------------------------------------------------------------------------------
+
 ## Introduction
 
 The metafields are Namespaced Key - Value store for Apps.
@@ -399,55 +401,123 @@ An example would be to use it in an app for Bookstores that require that you ass
     + `owner_resource` (string) - Type of entity to which is associated the Metafield.
     + `id` (number) - The unique numeric identifier for the Metafield.
     + `namespace` (string) - The namespace where the Metafield makes sense. It can be any string that starts with a letter followed only by: `a-z`, `A-Z`, `0-9` or `_`.
-    + `key` (string) - String that identifies the Metafield in some namespace. It can be any string that starts with a letter followed only by: a-z A-Z 0-9 or _.
-    + `description` (string) - String explaining the Metafield's meaning (optional).
+    + `key` (string) - String that identifies the Metafield in some namespace. It can be any string that starts with a letter followed only by: `a-z`, `A-Z`, `0-9` or `_`.
+    + `description` (string, optional) - String explaining the Metafield's meaning (optional).
     + `value` (string) - Metafield's value (string).
     + `owner_resource` (string) - Type of entity to which is associated the Metafield.
     + `owner_id` (string) - Entity id to which is associated the Metafield.
     + `created_at` (string) - Date when the Metafield was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
     + `updated_at` (string) - Date when the Metafield was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
 
-### Retrieve All Metafields [GET /metafields/#{owner_resource}{?owner_id,namespace,key,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+### Retrieve A List Of All Metafields [GET /metafields/#{owner_resource}{?owner_id,namespace,key,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
 
 + Parameters
     + owner_resource (string, `Product`) - Type of entity to which is associated the Metafield.
     + owner_id (number, optional) - Entity id to which is associated the metaField.
     + namespace (string, optional) - The namespace where the Metafield was defined.
     + key (string, optional) - Metafield's key.
-    + `created_at_min` (string, optional) - Show Products created after date (ISO 8601 format).
-    + `created_at_max` (string, optional) - Show Products created before date (ISO 8601 format).
-    + `updated_at_min` (string, optional) - Show Products last updated after date (ISO 8601 format).
-    + `updated_at_max` (string, optional) - Show Products last updated before date (ISO 8601 format).
+    + created_at_min (string, optional, `2013-01-01T00:00:00-03:00`) - Show Products created after date (ISO 8601 format).
+    + created_at_max (string, optional) - Show Products created before date (ISO 8601 format).
+    + updated_at_min (string, optional) - Show Products last updated after date (ISO 8601 format).
+    + updated_at_max (string, optional) - Show Products last updated before date (ISO 8601 format).
     + page (string, optional) - Page to show.
-    + `per_page` (string, optional) - Amount of results.
-    + fields (string, optional) - Comma-separated list of fields to include in the response.
+    + per_page (string, optional, `3`) - Amount of results.
+    + fields (string, optional, `owner_id,key,value`) - Comma-separated list of fields to include in the response.
 
 + Response 200 (application/json)
 
         [
             {
-                "id":10691,
                 "key":"key3",
                 "value":"3",
-                "namespace":"namespace3",
-                "description":"description3",
-                "owner_id":2856879,
-                "owner_resource":"Product",
-                "created_at":"2015-01-02T19:48:44+0000",
-                "updated_at":"2015-01-02T19:48:44+0000"
+                "owner_id":2856934
             },
             {
-                "id":10692,
                 "key":"key4",
                 "value":"4",
-                "namespace":"namespace4",
-                "description":"description4",
-                "owner_id":2856879,
-                "owner_resource":"Product",
-                "created_at":"2015-01-02T19:48:44+0000",
-                "updated_at":"2015-01-02T19:48:44+0000"
+                "owner_id":2856934
+            },
+            {
+                "key":"key5",
+                "value":"5",
+                "owner_id":2856934
             }
         ]
+
+### Retrieve A Single Metafield [GET /metafields/#{id}]
+
++ Parameters
+    + id (number, `11896`) - The unique numeric identifier for the Metafield.
+
++ Response 200 (application/json)
+
+        {
+            "id":11896,
+            "key":"key0",
+            "value":"0",
+            "namespace":"namespace0",
+            "description":"description0",
+            "owner_id":2856959,
+            "owner_resource":"Product",
+            "created_at":"2015-01-02T20:01:50+0000",
+            "updated_at":"2015-01-02T20:01:50+0000"
+        }
+
+### Create A New Metafield [POST /metafields/{?key,value,namespace,description,owner_id,owner_resource}]
+
++ Parameters
+    + key (string, `the_key`) - String that identifies the Metafield in some namespace. It can be any string that starts with a letter followed only by: `a-z`, `A-Z`, `0-9` or `_`.
+    + value (string, `its_value`) - Metafield's value (string).
+    + namespace (string, `a_namespace`) - The namespace where the Metafield makes sense. It can be any string that starts with a letter followed only by: `a-z`, `A-Z`, `0-9` or `_`.
+    + description (string, optional, `an adequate description`) - String explaining the Metafield's meaning.
+    + owner_id (number, `2857023`) - Entity id to which is associated the Metafield.
+    + owner_resource (string, `Product`) - Type of entity to which is associated the Metafield.
+
++ Response 201 (application/json)
+
+        {
+            "id":12877,
+            "namespace":"a_namespace",
+            "description":"an adequate description",
+            "key":"the_key","value":"its_value",
+            "owner_id":2857023,
+            "owner_resource": "Product",
+            "created_at":"2015-01-02 20:27:51",
+            "updated_at":"2015-01-02 20:27:51",
+            "deleted_at":null
+        }
+
+### Modify An Existing Metafield [PUT /metafields/#{id}{?value,description}]
+
++ Parameters
+    + id (number, `13226`) - The unique numeric identifier for the Metafield.
+    + value (string, optional,`new_value`) - Metafield's value (string).
+    + description (string, optional, `a better description`) - String explaining the Metafield's meaning.
+
++ Response 200 (application/json)
+
+        {
+            "id":13226,
+            "key":"key0",
+            "value":"new_value",
+            "namespace":"namespace0",
+            "description":"a better description",
+            "owner_id":2857047,
+            "owner_resource":"Product",
+            "created_at":"2015-01-02T20:32:08+0000",
+            "updated_at":"2015-01-02T20:32:09+0000"
+        }
+
+### Delete An Existing Metafield [DELETE /metafields/#{id}]
+
++ Parameters
+    + id (number, `13226`) - The unique numeric identifier for the Metafield.
+
++ Response 200 (application/json)
+
+        {
+            
+        }
 
 # Group Script
 
@@ -808,9 +878,11 @@ When on the `Thank You` for your order page, the Checkout `LS` object also has t
 
 ### Remove An Existing Script [DELETE /script/#{id}]
 
-+ Response 200
++ Response 200 (application/json)
 
-        {}
+        {
+            
+        }
 
 # Group Webhook
 
@@ -1067,4 +1139,6 @@ A webhook notification expects a 200 status code in `response`. If this does not
 
 + Response 200
 
-        {}
+        {
+            
+        }
