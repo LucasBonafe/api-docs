@@ -361,7 +361,180 @@ Work in progress.
 
 # Group Category
 
-Work in progress.
+## Introduction
+
+A Category lets the store owner group their products to make the store is easier to browse.
+
+## Managing Categories: Examples And Resources [/categories]
+
++ Attributes
+    + id (number) - The unique numeric identifier for the Category.
+    + name (string) - List of the names of the Category, in every language supported by the store.
+    + descripton (string) - List of the descriptions of the Category, as HTML, in every language supported by the store.
+    + handle (string) - List of the url-friendly strings generated from the Category's names, in every language supported by the store.
+    + parent (string) - Id of the Category's parent. `null` if it has no parent.
+    + subcategories (string) - The ids of the Category's first level subcategories.
+    + `created_at` (string) - Date when the Category was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Category was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+
+### Retrieve A List Of All Categories [GET /categories/{?since_id,language,handle,parent_id,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+
++ Parameters
+    + since_id (string, optional) - Restrict results to after the specified ID.
+    + language (string, optional) - Specify search language (required when serching for handle).
+    + handle (string, optional) - Show Categories with a given URL.
+    + parent_id (string, optional) - Show Categories with a given parent category.
+    + created_at_min (string, optional) - Show Categories created after date (ISO 8601 format).
+    + created_at_max (string, optional) - Show Categories created before date (ISO 8601 format).
+    + updated_at_min (string, optional) - Show Categories last updated after date (ISO 8601 format).
+    + updated_at_max (string, optional) - Show Categories last updated before date (ISO 8601 format).
+    + page (number, optional) - Page to show
+    + per_page (string, optional) - Amount of results
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "description": {
+                  "en": "",
+                  "es": "",
+                  "pt": ""
+              },
+              "handle": {
+                  "en": "poke-balls",
+                  "es": "poke-balls",
+                  "pt": "poke-balls"
+              },
+              "id": 4567,
+              "name": {
+                  "en": "Poké Balls",
+                  "es": "Poké Balls",
+                  "pt": "Poké Balls"
+              },
+              "parent": null,
+              "subcategories": [],
+              "updated_at": "2013-03-11T09:14:11-03:00"
+            }
+        ]
+
+### Retrieve A Single Category [GET /categories/#{id}{?fields}]
+
++ Parameters
+    + id (number, `4567`)
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        {
+          "created_at": "2013-01-03T09:11:51-03:00",
+          "description": {
+              "en": "",
+              "es": "",
+              "pt": ""
+          },
+          "handle": {
+              "en": "poke-balls",
+              "es": "poke-balls",
+              "pt": "poke-balls"
+          },
+          "id": 4567,
+          "name": {
+              "en": "Poké Balls",
+              "es": "Poké Balls",
+              "pt": "Poké Balls"
+          },
+          "parent": null,
+          "subcategories": [],
+          "updated_at": "2013-03-11T09:14:11-03:00"
+        }
+
+### Create A New Category [POST /categories]
+
++ Request (application/json)
+
+        {
+            "name": {
+              "en": "Gen I",
+              "es": "Gen I",
+              "pt": "Gen I"
+            },
+            "parent": 4567    
+        }
+
++ Response 201 (application/json)
+
+        {
+          "created_at": "2013-06-01T12:15:11-03:00",
+          "description": {
+              "en": "",
+              "es": "",
+              "pt": ""
+          },
+          "handle": {
+              "en": "gen-i",
+              "es": "gen-i",
+              "pt": "gen-i"
+          },
+          "id": 5678,
+          "name": {
+              "en": "Gen I",
+              "es": "Gen I",
+              "pt": "Gen I"
+          },
+          "parent": 4567,
+          "subcategories": [],
+          "updated_at": "2013-06-01T12:15:11-03:00"
+        }
+
+### Modify An Existing Category [PUT /categories/#{id}]
+
++ Parameters
+    + id (number, `5678`)
+
++ Request (application/json)
+
+        {
+          "id": 5678,
+          "parent": null
+        }
+
++ Response 200 (application/json)
+
+        {
+          "created_at": "2013-06-01T12:15:11-03:00",
+          "description": {
+              "en": "",
+              "es": "",
+              "pt": ""
+          },
+          "handle": {
+              "en": "gen-i",
+              "es": "gen-i",
+              "pt": "gen-i"
+          },
+          "id": 5678,
+          "name": {
+              "en": "Gen I",
+              "es": "Gen I",
+              "pt": "Gen I"
+          },
+          "parent": null,
+          "subcategories": [],
+          "updated_at": "2013-06-01T12:15:11-03:00"
+        }
+
+### Remove A Category [DELETE /categories/#{id}]
+
++ Parameters
+    + id (number, `4567`)
+
++ Response 200 (application/json)
+
+        {
+            
+        }
 
 # Group Order
 
