@@ -345,19 +345,883 @@ The Store resource contains general settings and information about a Tienda Nube
 
 # Group Product
 
-Work in progress.
+## Introduction
 
-## Product
+A Product in a Tienda Nube store is an item for sale, and it is a composition of entities that forms a product object.
 
-Work in progress.
+A `product` will always have one or more `product variants` and may have one or more `product images`.
 
-## Product Variant
+### Product
 
-Work in progress.
+A [Product](/#reference/product/managing-products-examples-and-resources) is an item for sale in a Tienda Nube/Nuvem Shop's store. It can be either a good or a service.
 
-## Product Images
+### Product Variants
 
-Work in progress.
+[Product Variants](/#reference/product/managing-product-variants-examples-and-resources) allow you to group a shoe with different sizes and colors in the same product.
+
+### Product Images
+
+[Product Images](/#reference/product/managing-product-images-examples-and-resources) could well be the single most important design aspect of any store. Without the ability to touch, hold, smell, taste or otherwise handle the products they are interested in, potential customers have only images to interact with.
+
+The product images have the following restrictions:
+* Must weight less than 10MB
+* Must be in one of the following formats: .gif, .jpg, .png
+
+## Managing Products: Examples And Resources [/product]
+
++ Attributes
+    + id (number) - The unique numeric identifier for the Product.
+    + name (string) - List of the names of the Product, in every language supported by the store.
+    + descripton (string) - List of the descriptions of the Product, as HTML, in every language supported by the store.
+    + handle (string) - List of the url-friendly strings generated from the Product's names, in every language supported by the store.
+    + variants (string) - List of [Product Variant] objects representing the different version of the Product.
+    + images (string) - List of [Product Image] objects representing the Product's images.
+    + categories (string) - List of [Category](/#reference/category) objects representing the Product's categories.
+    + published (string) - `true` if the Product is published in the store. `false` if the Product will not show up on the store.
+    + attributes (string) - List of the names of the attributes whose values define the variants. E.g.: Color, Size, etc.
+    + tags (string) - String with all the Product's tags, separated by commas.
+    + `created_at` (string) - Date when the Product was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+
+### Retrieve A List Of All The Stores' Products [GET /products/{?since_id,language,q,handle,category_id,published,free_shipping,created_at_min,created_at_max,updated_at_min,updated_at_max,sort_by,page,per_page,fields}]
+
++ Parameters
+    + since_id (string, optional) - Restrict results to after the specified ID.
+    + language (string, optional) - Specify search language.
+    + q (string, optional) - Search Products containing the given text in their names or descriptions.
+    + handle (string, optional) - Show Products with a given URL.
+    + category_id (string, optional) - Show Products with a given category.
+    + published (string, optional) - Show Products by published status. Valid values are "true" or "false".
+    + free_shipping (string, optional, `true`) - Show Products by whether they have free shipping or not. Valid values are "true" or "false".
+    + created_at_min (string, optional) - Show Products created after date (ISO 8601 format).
+    + created_at_max (string, optional) - Show Products created before date (ISO 8601 format).
+    + updated_at_min (string, optional) - Show Products last updated after date (ISO 8601 format).
+    + updated_at_max (string, optional) - Show Products last updated before date (ISO 8601 format).
+    + sort_by (string, optional) - Sort Products by a particular criteria.
+    + page (number, optional) - Page to show.
+    + per_page (number, optional) - Amount of results.
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 435407,
+                "name": {
+                    "es": "Cambiate por favor",
+                    "en": "OG add image action"
+                },
+                "description": {
+                    "es": "<p>Isso!<\/p>\r\n",
+                    "en": "<p>Isso!<\/p>\r\n"
+                },
+                "handle": {
+                    "es": "cambiate-por-favor",
+                    "en": "og-add-image-action"
+                },
+                "attributes": [],
+                "published": true,
+                "free_shipping": true,
+                "created_at": "2012-02-19T17:34:36+0000",
+                "updated_at": "2014-07-17T14:13:19+0000",
+                "variants": [
+                    {
+                        "id": 821537,
+                        "product_id": 435407,
+                        "position": 5,
+                        "price": "22.00",
+                        "promotional_price": null,
+                        "stock_management": false,
+                        "stock": null,
+                        "weight": "0.75",
+                        "width": "0.00",
+                        "height": "0.00",
+                        "depth": "0.00",
+                        "sku": "ASF",
+                        "values": [],
+                        "created_at": "2012-02-19T17:34:37+0000",
+                        "updated_at": "2014-07-17T14:13:19+0000"
+                    }
+                ],
+                "tags": "algo, jojo",
+                "images": [
+                    {
+                        "id": 634688,
+                        "product_id": 435407,
+                        "src": "https:\/\/s3-sa-east-1.amazonaws.com\/tiendanube-mati\/stores\/046\/products\/blog%2024-1024-1024.jpg",
+                        "position": 1
+                    },
+                    {
+                        "id": 1021828,
+                        "product_id": 435407,
+                        "src": "https:\/\/s3-sa-east-1.amazonaws.com\/tiendanube-mati\/stores\/046\/products\/do-test-1024-1024.jpg",
+                        "position": 2
+                    }
+                ],
+                "categories": [
+                    {
+                        "id": 105190,
+                        "name": {
+                            "es": "Pantalones",
+                            "en": "Pantalones"
+                        },
+                        "description": {
+                            "es": "",
+                            "en": ""
+                        },
+                        "handle": {
+                            "es": "pantalones",
+                            "en": "pantalones"
+                        },
+                        "parent": null,
+                        "subcategories": [
+                            119258
+                        ],
+                        "created_at": "2012-02-19T17:34:36+0000",
+                        "updated_at": "2014-01-28T14:10:12+0000"
+                    }
+                ]
+            }
+        ]
+
+### Retrieve A Single Product [GET /products/#{id}{?fields}]
+
++ Parameters
+    + id (number, `1234`)
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        {
+          "attributes": [
+              {
+                  "en": "Size"
+              }
+          ],
+          "categories": [
+              {
+                  "created_at": "2013-01-03T09:11:51-03:00",
+                  "description": {
+                      "en": "",
+                      "es": "",
+                      "pt": ""
+                  },
+                  "handle": {
+                      "en": "poke-balls",
+                      "es": "poke-balls",
+                      "pt": "poke-balls"
+                  },
+                  "id": 4567,
+                  "name": {
+                      "en": "Poké Balls",
+                      "es": "Poké Balls",
+                      "pt": "Poké Balls"
+                  },
+                  "parent": null,
+                  "subcategories": [],
+                  "updated_at": "2013-03-11T09:14:11-03:00"
+            }
+          ],
+          "created_at": "2013-01-03T09:11:51-03:00",
+          "description": {
+              "en": "<p>The best Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.</p>",
+              "es": "<p>La mejor Bola con el nivel máximo de desempeño. Atrapará cualquier Pokémon sin fallar.</p>",
+              "pt": "<p>A melhor Bola com o nível máximo de desempenho. Ele vai pegar qualquer Pokémon selvagem sem falhar.</p>"
+          },
+          "handle": {
+              "en": "master-ball",
+              "es": "master-ball",
+              "pt": "master-ball"
+          },
+          "id": 1234,
+          "images": [
+            {
+              "id": 101,
+              "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/servine-640-0.jpg",
+              "position": 1,
+              "product_id": 1234
+            },
+            {
+              "id": 112,
+              "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/onyx-640-0.jpg",
+              "position": 2,
+              "product_id": 1234
+            },
+            {
+              "id": 123,
+              "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/stoutland-640-0.jpg",
+              "position": 3,
+              "product_id": 1234
+            }
+          ],
+          "name": {
+              "en": "Master Ball",
+              "es": "Master Ball",
+              "pt": "Master Ball"
+          },
+          "published": true,
+          "updated_at": "2013-03-11T09:14:11-03:00",
+          "variants": [
+            {
+             "id": 101,
+             "promotional_price": "19.00",
+             "created_at": "2013-01-03T09:11:51-03:00",
+             "depth": null,
+             "height": null,
+             "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+             "price": "25.00",
+             "product_id": 1234,
+             "stock_management": true,
+             "stock": 5,
+             "sku": "BSG1234A",
+             "updated_at": "2013-03-11T09:14:11-03:00",
+             "weight": "2.00",
+             "width": null      
+           },
+           {
+             "id": 112,
+             "promotional_price": "19.00",
+             "created_at": "2013-01-03T09:11:51-03:00",
+             "depth": null,
+             "height": null,
+             "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+             "price": "25.00",
+             "product_id": 1234,
+             "stock_management": true,
+             "stock": 5,
+             "sku": "BSG1234B",
+             "updated_at": "2013-03-11T09:14:11-03:00",
+             "weight": "2.25",
+             "width": null      
+           },
+           {
+             "id": 133,
+             "promotional_price": "19.00",
+             "created_at": "2013-01-03T09:11:51-03:00",
+             "depth": null,
+             "height": null,
+             "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+             "price": "25.00",
+             "product_id": 1234,
+             "stock_management": true,
+             "stock": 5,
+             "sku": "BSG1234C",
+             "updated_at": "2013-03-11T09:14:11-03:00",
+             "weight": "2.50",
+             "width": null
+           }
+          ]
+        }
+
+### Create A New Product [POST /products/{?name,variants,images}]
+
++ Parameters
+    + name (string, required)
+    + variants (string, required)
+    + images (string, optional)
+
++ Request (application/json)
+
+        {
+            "images": [
+              {
+                "src": "http://images1.wikia.nocookie.net/__cb20101106022321/pokemon/images/f/f1/UltraBallArt.png"
+              }
+            ],
+            "name": {
+              "en": "Ultra Ball",
+              "es": "Ultra Ball",
+              "pt": "Ultra Ball"
+            },
+            "variants": [
+                {
+                    "price": "10.00",
+                    "stock_management": true,
+                    "stock": 12,
+                    "weight": "2.00"
+                }
+            ]
+        }
+
++ Response 201 (application/json)
+
+        {
+            "attributes": [],
+            "categories": [
+                {
+                    "created_at": "2013-01-03T09:11:51-03:00",
+                    "description": {
+                        "en": "",
+                        "es": "",
+                        "pt": ""
+                    },
+                    "handle": {
+                        "en": "poke-balls",
+                        "es": "poke-balls",
+                        "pt": "poke-balls"
+                    },
+                    "id": 4567,
+                    "name": {
+                        "en": "Poké Balls",
+                        "es": "Poké Balls",
+                        "pt": "Poké Balls"
+                    },
+                    "parent": null,
+                    "subcategories": [],
+                    "updated_at": "2013-03-11T09:14:11-03:00"
+              }
+            ],
+            "created_at": "2013-06-01T12:15:11-03:00",
+            "description": {
+                "en": "",
+                "es": "",
+                "pt": ""
+            },
+            "handle": {
+                "en": "ultra-ball",
+                "es": "ultra-ball",
+                "pt": "ultra-ball"
+            },
+            "id": 2435,
+            "images": [
+              {
+                "id": 231,
+                "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/UltraBallArt.jpg"
+                "position": 1,
+                "product_id": 2435
+              }
+            ],
+            "name": {
+                "en": "Ultra Ball",
+                "es": "Ultra Ball",
+                "pt": "Ultra Ball"
+            },
+            "published": true,
+            "created_at": "2013-06-01T12:15:11-03:00",
+            "variants": [
+                {
+                 "id": 101,
+                 "promotional_price": null,
+                 "created_at": "2013-06-01T12:15:11-03:00",
+                 "depth": null,
+                 "height": null,
+                 "values": [],
+                 "price": "10.00",
+                 "product_id": 1234,
+                 "stock_management": true,
+                 "stock": 12,
+                 "sku": null,
+                 "updated_at": "2013-03-11T09:14:11-03:00",
+                 "weight": "2.00",
+                 "width": null      
+               }
+            ]
+        }
+
+#### Modify An Existing Product [PUT /products/#{id}]
+
++ Parameters
+    + id (number, `5123`)
+
++ Request (application/json)
+
+        {
+          "categories": [4567],
+          "id": 1234,
+          "published": false
+        }
+
++ Response 200 (application/json)
+
+        {
+            "attributes": [
+                {
+                    "en": "Size"
+                }
+            ],
+            "categories": [
+                {
+                    "created_at": "2013-01-03T09:11:51-03:00",
+                    "description": {
+                        "en": "",
+                        "es": "",
+                        "pt": ""
+                    },
+                    "handle": {
+                        "en": "poke-balls",
+                        "es": "poke-balls",
+                        "pt": "poke-balls"
+                    },
+                    "id": 4567,
+                    "name": {
+                        "en": "Poké Balls",
+                        "es": "Poké Balls",
+                        "pt": "Poké Balls"
+                    },
+                    "parent": null,
+                    "subcategories": [],
+                    "updated_at": "2013-03-11T09:14:11-03:00"
+              }
+            ],
+            "created_at": "2013-01-03T09:11:51-03:00",
+            "description": {
+                "en": "<p>The best Ball with the ultimate level of performance. It will catch any wild Pokémon without fail.</p>",
+                "es": "<p>La mejor Bola con el nivel máximo de desempeño. Atrapará cualquier Pokémon sin fallar.</p>",
+                "pt": "<p>A melhor Bola com o nível máximo de desempenho. Ele vai pegar qualquer Pokémon selvagem sem falhar.</p>"
+            },
+            "handle": {
+                "en": "master-ball",
+                "es": "master-ball",
+                "pt": "master-ball"
+            },
+            "id": 1234,
+            "images": [
+              {
+                "id": 101,
+                "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/servine-640-0.jpg",
+                "position": 1,
+                "product_id": 1234
+              },
+              {
+                "id": 112,
+                "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/onyx-640-0.jpg",
+                "position": 2,
+                "product_id": 1234
+              },
+              {
+                "id": 123,
+                "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/stoutland-640-0.jpg",
+                "position": 3,
+                "product_id": 1234
+              }
+            ],
+            "name": {
+                "en": "Master Ball",
+                "es": "Master Ball",
+                "pt": "Master Ball"
+            },
+            "published": false,
+            "updated_at": "2013-06-01T12:15:11-03:00",
+            "variants": [
+              {
+               "id": 101,
+               "promotional_price": "19.00",
+               "created_at": "2013-01-03T09:11:51-03:00",
+               "depth": null,
+               "height": null,
+               "values": [
+                   {
+                       "en": "Small"
+                   }
+               ],
+               "price": "25.00",
+               "product_id": 1234,
+               "stock_management": true,
+               "stock": 5,
+               "sku": "BSG1234A",
+               "updated_at": "2013-03-11T09:14:11-03:00",
+               "weight": "2.00",
+               "width": null      
+             },
+             {
+               "id": 112,
+               "promotional_price": "19.00",
+               "created_at": "2013-01-03T09:11:51-03:00",
+               "depth": null,
+               "height": null,
+               "values": [
+                   {
+                       "en": "Medium"
+                   }
+               ],
+               "price": "25.00",
+               "product_id": 1234,
+               "stock_management": true,
+               "stock": 5,
+               "sku": "BSG1234B",
+               "updated_at": "2013-03-11T09:14:11-03:00",
+               "weight": "2.25",
+               "width": null      
+             },
+             {
+               "id": 133,
+               "promotional_price": "19.00",
+               "created_at": "2013-01-03T09:11:51-03:00",
+               "depth": null,
+               "height": null,
+               "values": [
+                   {
+                       "en": "Large"
+                   }
+               ],
+               "price": "25.00",
+               "product_id": 1234,
+               "stock_management": true,
+               "stock": 5,
+               "sku": "BSG1234C",
+               "updated_at": "2013-03-11T09:14:11-03:00",
+               "weight": "2.50",
+               "width": null
+             }
+            ]
+        }
+
+### Remove A Product [DELETE /products/#{id}]
+
++ Parameters
+    + id (number, `1234`)
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+## Managing Product Variants: Examples And Resources [/product_variant]
+
++ Attributes
+    + id (number) - The unique numeric identifier for the Product Variant.
+    + image_id (number) - The id of the product's image associated with the variant.
+    + product_id (number) - The id of the product associated with the variant.
+    + price (number) - Price of the Product Variant. `null` indicates the product will initiate a contact instead of a checkout process.
+    + promotional_price (string) - Lower price to display as a sale. The value of price will be displayed crossed out for comparison.
+    + stock_management (string) - Specifies whether or not Tienda Nube/Nuvem Shop tracks the number of items in stock for this product variant. Valid values are `true` if Tienda Nube/Nuvem Shop tracks the stock, `false` if it doesn't.
+    + stock (string) - Stock of the Product Variant. If `stock_management` is `false` the stock will be `null`.
+    + weight (string) - Weight of the Product Variant in kilograms.
+    + width (string) - Width of the Product Variant in centimetres.
+    + height (string) - Height of the Product Variant in centimetres.
+    + depth (string) - Depth of the Product Variant in centimetres.
+    + sku (string) - Unique identifier of the Product Variant in your store.
+    + values (string) - List of the values of the attributes whose values define the variant. E.g.: Large, Medium, etc.
+    + `created_at` (string) - Date when the Product Variant was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product Variant was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+
+### Retrieve A List Of All Product Variants For A Given Product [GET /products/#{product_id}/variants/{?since_id,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
+
++ Parameters
+    + product_id (number, `1234`) - The id of the product associated with the variant.
+    + since_id (string, `105`) - Restrict results to after the specified ID.
+    + created_at_min (string) - Show Product Variants created after date (ISO 8601 format).
+    + created_at_max (string) - Show Product Variants created before date (ISO 8601 format).
+    + updated_at_min (string) - Show Product Variants last updated after date (ISO 8601 format).
+    + updated_at_max (string) - Show Product Variants last updated before date (ISO 8601 format).
+    + page (string) - Page to show.
+    + per_page (string) - Amount of results.
+    + fields (string) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+              "id": 112,
+              "image_id": null,
+              "promotional_price": "19.00",
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+              "price": "25.00",
+              "product_id": 1234,
+              "stock_management": true,
+              "stock": 5,
+              "sku": "BSG1234B",
+              "updated_at": "2013-03-11T09:14:11-03:00",
+              "weight": "2.25",
+              "width": null      
+            },
+            {
+              "id": 133,
+              "image_id": null,
+              "promotional_price": "19.00",
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+              "price": "25.00",
+              "product_id": 1234,
+              "stock_management": true,
+              "stock": 5,
+              "sku": "BSG1234C",
+              "updated_at": "2013-03-11T09:14:11-03:00",
+              "weight": "2.50",
+              "width": null
+            }
+        ]
+
+### Retrieve A Single Product Variant [GET /products/#{product_id}/variants/#{id}{?fields}]
+
++ Parameters
+    + id (number, `112`) - The unique identifier for the Product Variant.
+    + product_id (number, `1234`) - The id of the product associated with the product's variant.
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        {
+              "id": 112,
+              "image_id": null,
+              "promotional_price": "19.00",
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "Small"
+                  }
+              ],
+              "price": "25.00",
+              "product_id": 1234,
+              "stock_management": true,
+              "stock": 5,
+              "sku": "BSG1234B",
+              "updated_at": "2013-03-11T09:14:11-03:00",
+              "weight": "2.25",
+              "width": null      
+        }
+
+### Create A New Product Variant [POST /products/#{product_id}/variants]
+
++ Parameters
+    + product_id (number, `1234`)
+
++ Request (application/json)
+
+        {
+            "values": [
+                {
+                    "en": "X-Large"
+                }
+            ],
+            "price": "19.00"
+        }
+
++ Response 201 (application/json)
+
+        {
+              "id": 144,
+              "image_id": null,
+              "promotional_price": null,
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "X-Large"
+                  }
+              ],
+              "price": "19.00",
+              "product_id": 1234,
+              "stock_management": false,
+              "stock": null,
+              "sku": null,
+              "updated_at": "2013-06-01T09:15:11-03:00",
+              "weight": null,
+              "width": null      
+        }
+
+### Modify An Existing Product Variant [PUT /products/#{product_id}/variants/#{id}]
+
++ Parameters
+    + id (number, `144`)
+    + product_id (number, `1234`)
+
++ Request (application/json)
+
+        {
+              "id": 144,
+              "image_id": null,
+              "promotional_price": "19.00",
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "X-Large"
+                  }
+              ],
+              "price": "25.00",
+              "product_id": 1234,
+              "stock_management": true,
+              "stock": 5,
+              "sku": "BSG1234D",
+              "updated_at": "2013-06-01T09:15:11-03:00",
+              "weight": "2.75",
+              "width": null
+        }
+
++ Response 200 (application/json)
+
+        {
+              "id": 144,
+              "image_id": null,
+              "promotional_price": "19.00",
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "depth": null,
+              "height": null,
+              "values": [
+                  {
+                      "en": "X-Large"
+                  }
+              ],
+              "price": "25.00",
+              "product_id": 1234,
+              "stock_management": true,
+              "stock": 5,
+              "sku": "BSG1234D",
+              "updated_at": "2013-06-01T12:15:11-03:00",
+              "weight": "2.75",
+              "width": null      
+        }
+
+### Remove A Product Variant [DELETE /products/#{product_id}/variants/#{id}]
+
++ Parameters
+    + id (number, `112`)
+    + product_id (number, `1234`)
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+## Managing Product Images: Examples And Resources [/product_image]
+
++ Attributes
+    + id (number) - The unique numeric identifier for the Product Image.
+    + product_id (number) - The id of the product associated with the image.
+    + src (string) - URL of the product image.
+    + position (number) - Number indicating the position of the image in the product's image list. 1 is the first and the main product image.
+    + `created_at` (string) - Date when the Product Image was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product Image was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+
+### Retrieve A List Of All Product Images For A Given Product [GET /products/#{product_id}/images/{?since_id,src,position,page,per_page,fields}]
+
++ Parameters
+    + product_id (number, `1234`)
+    + since_id (string, optional, `105`) - Restrict results to after the specified ID.
+    + src (string, optional) - Show Product Images with a given URL.
+    + position (string, optional) - Show Product Images at a given position.
+    + page (string, optional) - Page to show.
+    + per_page (string, optional) - Amount of results.
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        [
+            {
+              "id": 112,
+              "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/onyx-640-0.jpg",
+              "position": 2,
+              "product_id": 1234,
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "updated_at": "2013-03-11T09:14:11-03:00"
+            },
+            {
+              "id": 123,
+              "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/stoutland-640-0.jpg",
+              "position": 3,
+              "product_id": 1234,
+              "created_at": "2013-01-03T09:11:51-03:00",
+              "updated_at": "2013-03-11T09:14:11-03:00"
+            }
+        ]
+
+### Retrieve A Single Product Image [GET /products/#{product_id}/images/#{id}{?fields}]
+
++ Parameters
+    + id (number, `112`)
+    + product_id (number, `1234`)
+    + fields (string, optional) - Comma-separated list of fields to include in the response.
+
++ Response 200 (application/json)
+
+        {
+            "id": 112,
+            "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/onyx-640-0.jpg",
+            "position": 2,
+            "product_id": 1234,
+            "created_at": "2013-01-03T09:11:51-03:00",
+            "updated_at": "2013-03-11T09:14:11-03:00"
+        }
+
+### Create A New Product Image [POST /products/#{product_id}/images/{?src,attachment,filename,position}]
+
++ Parameters
+    + product_id (number, required, `1234`)
+    + src (string, required, `http://example.com/charmander.jpg`) - The URL to the image.
+    + attachment (string, optional) - Must be image encoded in a Base64 String.
+    + filename (string, optional) - A filename containing only letters, numbers, dashes, underscores and dots.
+    + position (number, optional) - A number indicating in which position of the image list, the new image should be placed.
+
++ Response 201 (application/json)
+
+        {
+            "id": 134,
+            "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/charmander-640-0.jpg",
+            "position": 4,
+            "product_id": 1234,
+            "created_at": "2013-04-12T09:14:11-03:00",
+            "updated_at": "2013-04-12T09:14:11-03:00"
+        }
+
+### Modify An Existing Product Image [PUT /products/#{product_id}/images/#{id}]
+
++ Parameters
+    + id (number, `145`)
+    + product_id (number, `1234`)
+
++ Request (application/json)
+
+        {
+          "id": 145,
+          "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/mewtwo-640-0.jpg",
+          "position": 1,
+          "product_id": 1234
+        }
+
++ Response 200 (application/json)
+
+        {
+          "id": 145,
+          "src": "http://d26lpennugtm8s.cloudfront.net/stores/001/234/products/mewtwo-640-0.jpg",
+          "position": 1,
+          "product_id": 1234,
+          "created_at": "2013-01-03T09:11:51-03:00",
+          "updated_at": "2013-03-11T09:14:16-03:00"
+        }
+
+### Remove A Product Image [DELETE /products/#{product_id}/images/#{id}]
+
++ Parameters
+    + id (number, `145`)
+    + product_id (number, `1234`)
+
++ Response 200 (application/json)
+
+        {
+            
+        }
 
 # Group Category
 
