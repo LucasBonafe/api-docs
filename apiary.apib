@@ -1,11 +1,9 @@
 FORMAT: 1A
-HOST: http://tiendanube.apiblueprint.org/
+HOST: http://api.tiendanube.com/v1/
 
 # Nuvem Shop / Tienda Nube API
 
 This is the official documentation for the Nuvem Shop / Tienda Nube public API, and it will show you how to use our API to authenticate, make requests, and retrieve data.
-
->**Disclaimer**: Due to high volume of applications and themes we're receiving to be published in our AppStore and ThemeStore, our response time have become very high. For this reason, we're building a new team that will give you support exclusively, with the sole purpose of helping you bring your service to our customers. In the meantime, you can design applications and themes, and offer them to your customers individually (without publishing them in our site), but with full 100% access to the functionalities offered by Tienda Nube / Nuvem Shop.
 
 ## Getting Started
 
@@ -23,9 +21,9 @@ Before you start to code your app integration, you will need to:
 
 This API adheres to the [REST](https://en.wikipedia.org/wiki/Representational_State_Transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
 
-The whole communication with the API is made through HTTP requests, using headers to specify and retrieve metadata and [JSON](https://www.json.org/) as the content format.
+All communication with the API is made through HTTP requests, using headers to specify and retrieve metadata, and [JSON](https://www.json.org/) as the content format.
 
-Detailed here is some useful information before you start making requests to the API, like URLs, mandatory headers, the available HTTP methods and typical HTTP status codes.
+In this section, we describe what you need to exchange information with the API, like the base URLs, the mandatory headers, the available HTTP methods and the different response status codes you may come across.
 
 ### Base URL
 
@@ -34,9 +32,9 @@ The API is available under the two following URLs and there is no difference bet
 * `https://api.nuvemshop.com.br`
 * `https://api.tiendanube.com`
 
-The path is prefixed with the store id and the API version, which is currently _v1_, so if we change the API in backward-incompatible ways, we'll bump the version marker and maintain stable support for the old URLs.
+The path is prefixed with the API version and store ID, respectively, which is currently _v1_, so if we change the API in backward-incompatible ways, we'll bump the version marker and maintain stable support for the old URLs.
 
-Finally, **the base URL must be suffixed with the requested store ID**, so if you want to access the store with id _123456_ via the API the URL will be `https://api.nuvemshop.com.br/v1/123456` or `https://api.tiendanube.com/v1/123456`.
+Finally, **the API version must be suffixed with the requested store ID**, so if you want to access the store with id _123456_ via the API the URL will be `https://api.nuvemshop.com.br/v1/123456` or `https://api.tiendanube.com/v1/123456`.
 
 >**Note**: The API is only available over SSL, so you have to specify the protocol (HTTPS) in all URLs.
 
@@ -64,6 +62,7 @@ Finally, **the base URL must be suffixed with the requested store ID**, so if yo
 |`403`| Forbidden - Cannot access resource. |
 |`404`| Not Found - Resource doesn't exist. |
 |`409`| Conflict - Discord with state of the resource on server. Can occur with too many PUT requests. |
+|`415`| Unsupported Media Type - Your request must include a `Content-type` header. See the [JSON](https://tiendanube.docs.apiary.io/#introduction/the-basics/json) section for more information. |
 |`422`| Unprocessable Entity - [Invalid fields sent](https://tiendanube.docs.apiary.io/#introduction/error-handling/client-errors). |
 |`429`| Too Many Requests - [API rate limits exceeded](https://tiendanube.docs.apiary.io/#introduction/usage-limits). |
 |`500`| [Internal Server Error](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
@@ -71,14 +70,20 @@ Finally, **the base URL must be suffixed with the requested store ID**, so if yo
 |`503`| [Service unavailable](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
 |`504`| [Gateway timeout](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
 
+### JSON
+
+All data is sent and received as JSON. Our format is to have no root element and we use snake_case to describe attribute keys. This means that you have to send `Content-Type: application/json; charset=utf-8` when POSTing or PUTing data into Tienda Nube/Nuvem Shop.
+
+>**Note**: You will receive a `415 Unsupported Media Type` response code if you leave out the Content-Type header.
+
 ### Pagination
 
-Requests that return multiple items (also know as Collections) will be paginated to 30 items by default. 
+Requests that return multiple items (also known as Collections) will be paginated to 30 items by default. 
 
 You can specify further pages with the `page` parameter and also set a custom page size up to 200 with the `per_page` parameter using a query string appended to the URL, like the following:
 * `https://api.tiendanube.com/v1/123456/products?page=2&per_page=100`
 
-To check the total count of the results you can use the `X-Total-Count` header that will be returned in every collection resource request.
+To check the total count of the results you can use the `X-Total-Count` header that will be returned by every request in a collection resource.
 
 To check the next and previous links for pagination you can use the `Link` header:
 
@@ -89,10 +94,12 @@ To check the next and previous links for pagination you can use the `Link` heade
 
 The possible `rel` values are:
 
-* **next**: Shows the URL of the immediate next page of results.
-* **last**: Shows the URL of the last page of results.
-* **first**: Shows the URL of the first page of results.
-* **prev**: Shows the URL of the immediate previous page of results.
+| Value | Description |
+| --- | --- |
+| next | Shows the URL of the immediate next page of results. |
+| last | Shows the URL of the last page of results. |
+| first | Shows the URL of the first page of results. |
+| prev | Shows the URL of the immediate previous page of results. |
 
 >**Note**: The page numbering is 1-based and ommiting the page parameter will return the first page.
 
@@ -184,12 +191,6 @@ In every API request you _must_ include a `User-Agent` header with the name of y
 >**Note**: If you don't supply this header, you will get a `400 Bad Request` response.
 
 ## Error Handling
-
-### JSON
-
-All data is sent and received as JSON. Our format is to have no root element and we use snake_case to describe attribute keys. This means that you have to send `Content-Type: application/json; charset=utf-8` when POSTing or PUTing data into Tienda Nube/Nuvem Shop.
-
->**Note**: You will receive a `415 Unsupported Media Type` response code if you leave out the Content-Type header.
 
 ### Client Errors
 
@@ -383,9 +384,10 @@ The product images have the following restrictions:
     + `created_at` (string) - Date when the Product was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
     + `updated_at` (string) - Date when the Product was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
 
-### Retrieve A List Of All The Stores' Products [GET /products/{?since_id,language,q,handle,category_id,published,free_shipping,created_at_min,created_at_max,updated_at_min,updated_at_max,sort_by,page,per_page,fields}]
+### Retrieve A List Of All The Stores' Products [GET /{store_id}/products/{?since_id,language,q,handle,category_id,published,free_shipping,created_at_min,created_at_max,updated_at_min,updated_at_max,sort_by,page,per_page,fields}]
 
 + Parameters
+    + store_id (integer, required) - The requested store ID
     + since_id (string, optional) - Restrict results to after the specified ID.
     + language (string, optional) - Specify search language.
     + q (string, optional) - Search Products containing the given text in their names or descriptions.
