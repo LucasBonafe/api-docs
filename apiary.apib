@@ -164,7 +164,7 @@ Apps should only ask for the access scopes they need. For example, if an app onl
 
 >**Note**: If you ask for any write scope, the read scope is implied.
 
->**Note**: As [Webhooks](https://github.com/TiendaNube/api-docs/blob/master/resources/webhook.md) rely on other resources, you will only be able to register webhooks for the resources you were granted permission to use.
+>**Note**: As a [Webhook](/#reference/webhook) relies on other resources, you will only be able to register webhooks for the resources you were granted permission to use.
 
 The available `scopes` are:
 * `read_content` / `write_content`
@@ -259,34 +259,34 @@ The Store resource contains general settings and information about a Tienda Nube
 ## Managing The Store: Examples And Resources [/store]
 
 + Attributes
-    + id (number) - The unique numeric identifier for the Store
-    + name (string) - List of the names of the Store, in every language supported by the store
-    + description (string) - List of the descriptions of the Store, in every language supported by the store
-    + type (string) - Store type. Examples are "clothing", "sports", "electronic"
-    + email (string) - Store owner's e-mail
-    + logo (string) - Store logo URL, starting with // (or null if it has no logo)
-    + contact_email (string) - Store's contact e-mail
-    + facebook (string) - Store's Facebook URL
-    + twitter (string) - Store's Twitter URL
-    + google_plus (string) - Store's G+ URL
-    + instagram (string) - Store's Instagram URL
-    + pinterest (string) - Store's Pinterest URL
-    + blog (string) - Store's blog URL
-    + address (string) - Store's address
-    + phone (string) - Store's phone
-    + business_id (string) - Business identifier (different for each country) of the company who owns the store
-    + business_name (string) - Business name of the company who owns the store
-    + business_address (string) - Business address of the company who owns the store
+    + id (number) - The unique numeric identifier for the Store.
+    + name (string) - List of the names of the Store, in every language supported by the store.
+    + description (string) - List of the descriptions of the Store, in every language supported by the store.
+    + type (string) - Store type. Examples include "clothing", "sports", "electronic". Can be null.
+    + email (string) - Store owner's e-mail.
+    + logo (string) - Store logo URL, starting with // (or null if it has no logo).
+    + contact_email (string) - Store's contact e-mail.
+    + facebook (string) - Store's Facebook URL.
+    + twitter (string) - Store's Twitter URL.
+    + google_plus (string) - Store's G+ URL.
+    + instagram (string) - Store's Instagram URL.
+    + pinterest (string) - Store's Pinterest URL.
+    + blog (string) - Store's blog URL.
+    + address (string) - Store's address.
+    + phone (string) - Store's phone.
+    + business_id (string) - Business identifier (different for each country) of the company who owns the store.
+    + business_name (string) - Business name of the company who owns the store.
+    + business_address (string) - Business address of the company who owns the store.
     + customer_accounts (string) - "optional" if the customer is allowed to checkout as guest. "mandatory" if not.
-    + plan_name (string) - Name of the Tienda Nube/Nuvem Shop's plan the store is on
+    + plan_name (string) - Name of the Tienda Nube/Nuvem Shop's plan the store is on.
     + country (string) - Store's country in ISO 3166-1 format.
-    + languages (string) - Store available languages with its currency and whether or not is active
-    + domains (string) - List of store's domains
+    + languages (string) - Store available languages with its currency and whether or not is active.
+    + domains (string) - List of store's domains.
     + original_domain (string) - Original tiendanube.com or nuvemshop.com.br domain for the Store.
     + current_theme (string) - Store's current theme.
     + main_language (string) - Store's main language.
     + main_currency (string) - Store's main currency in ISO 4217 format.
-    + admin_language (string) - Store's admin language
+    + admin_language (string) - Store's admin language.
     + created_at (string) - Date when the Store was created in ISO 8601 format.
 
 ### Retrieve the store information [GET /store{?fields}]
@@ -360,7 +360,7 @@ The Store resource contains general settings and information about a Tienda Nube
 
 A Product in a Tienda Nube store is an item for sale, and it is a composition of entities that forms a product object.
 
-A `product` will always have one or more `product variants` and may have one or more `product images`.
+A `Product` will always have one or more `Product Variants` and may have one or more `Product Images`.
 
 ### Product
 
@@ -368,15 +368,15 @@ A [Product](/#reference/product/managing-products-examples-and-resources) is an 
 
 ### Product Variants
 
-[Product Variants](/#reference/product/managing-product-variants-examples-and-resources) allow you to group a shoe with different sizes and colors in the same product.
+[Product Variants](/#reference/product/managing-product-variants-examples-and-resources) allow you to group up different variants/properties on the same product. For example, a shoe with different sizes and colors, all within the same product.
 
 ### Product Images
 
-[Product Images](/#reference/product/managing-product-images-examples-and-resources) could well be the single most important design aspect of any store. Without the ability to touch, hold, smell, taste or otherwise handle the products they are interested in, potential customers have only images to interact with.
+[Product Images](/#reference/product/managing-product-images-examples-and-resources) could well be the single most important design aspect of any store. Without the ability to touch, hold, smell, taste or otherwise handle the products they are interested in, potential customers have only the product's images to interact with.
 
-The product images have the following restrictions:
-* Must weight less than 10MB
-* Must be in one of the following formats: .gif, .jpg, .png
+> **Note**: The product images have the following restrictions:
+> * Must weight less than 10MB
+> * Must be in one of the following formats: .gif, .jpg, .png
 
 ## Managing Products: Examples And Resources [/product]
 
@@ -385,8 +385,8 @@ The product images have the following restrictions:
     + name (string) - List of the names of the Product, in every language supported by the store.
     + descripton (string) - List of the descriptions of the Product, as HTML, in every language supported by the store.
     + handle (string) - List of the url-friendly strings generated from the Product's names, in every language supported by the store.
-    + variants (string) - List of [Product Variant] objects representing the different version of the Product.
-    + images (string) - List of [Product Image] objects representing the Product's images.
+    + variants (string) - List of [Product Variant](/#reference/product/managing-product-variants-examples-and-resources) objects representing the different version of the Product.
+    + images (string) - List of [Product Image](/#reference/product/managing-product-images-examples-and-resources) objects representing the Product's images.
     + categories (string) - List of [Category](/#reference/category) objects representing the Product's categories.
     + published (string) - `true` if the Product is published in the store. `false` if the Product will not show up on the store.
     + attributes (string) - List of the names of the attributes whose values define the variants. E.g.: Color, Size, etc.
@@ -640,9 +640,9 @@ The product images have the following restrictions:
 ### Create A New Product [POST /products/{?name,variants,images}]
 
 + Parameters
-    + name (string, required)
-    + variants (string, required)
-    + images (string, optional)
+    + name (string, required, `Ultra Ball`)
+    + variants (string, required, `See request`)
+    + images (string, optional, `http://images/UltraBallArt.png`)
 
 + Request (application/json)
 
@@ -1123,7 +1123,7 @@ The product images have the following restrictions:
     + id (number) - The unique numeric identifier for the Product Image.
     + product_id (number) - The id of the product associated with the image.
     + src (string) - URL of the product image.
-    + position (number) - Number indicating the position of the image in the product's image list. 1 is the first and the main product image.
+    + position (number) - Number indicating the position of the image in the product's image list. 1 is the first and the main Product Image.
     + `created_at` (string) - Date when the Product Image was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
     + `updated_at` (string) - Date when the Product Image was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
 
@@ -1182,9 +1182,9 @@ The product images have the following restrictions:
 + Parameters
     + product_id (number, required, `1234`)
     + src (string, required, `http://example.com/charmander.jpg`) - The URL to the image.
-    + attachment (string, optional) - Must be image encoded in a Base64 String.
+    + attachment (string, optional) - Must be image encoded in a Base64 string.
     + filename (string, optional) - A filename containing only letters, numbers, dashes, underscores and dots.
-    + position (number, optional) - A number indicating in which position of the image list, the new image should be placed.
+    + position (number, optional) - A number indicating in which position of the image list should the new image be placed.
 
 + Response 201 (application/json)
 
@@ -1239,7 +1239,7 @@ The product images have the following restrictions:
 
 ## Introduction
 
-A Category lets the store owner group their products to make the store is easier to browse.
+A Category lets the store owner group their products to make the store easier to browse.
 
 ## Managing Categories: Examples And Resources [/categories]
 
@@ -1264,8 +1264,8 @@ A Category lets the store owner group their products to make the store is easier
     + created_at_max (string, optional) - Show Categories created before date (ISO 8601 format).
     + updated_at_min (string, optional) - Show Categories last updated after date (ISO 8601 format).
     + updated_at_max (string, optional) - Show Categories last updated before date (ISO 8601 format).
-    + page (number, optional) - Page to show
-    + per_page (string, optional) - Amount of results
+    + page (number, optional) - Page to show.
+    + per_page (string, optional) - Amount of results.
     + fields (string, optional) - Comma-separated list of fields to include in the response.
 
 + Response 200 (application/json)
@@ -1326,7 +1326,11 @@ A Category lets the store owner group their products to make the store is easier
           "updated_at": "2013-03-11T09:14:11-03:00"
         }
 
-### Create A New Category [POST /categories]
+### Create A New Category [POST /categories/{?name,parent}]
+
++ Parameters
+    + name (string, `Gen I`) - Restrict results to after the specified ID.
+    + parent (number, `4567`)
 
 + Request (application/json)
 
