@@ -9,17 +9,17 @@ This is the official documentation for the Nuvem Shop / Tienda Nube public API, 
 
 Before you start to code your app integration, you will need to:
 
-1. Sign-up for a partner account at [Nuvem Shop](http://www.nuvemshop.com.br/parceiros) or [Tienda Nube](http://www.tiendanube.com/partners).
+1. Sign-up for a partner account at [Nuvem Shop](http://www.nuvemshop.com.br/parceiros) or [Tienda Nube](tiendanube.com/partners).
 
 2. Once inside your partner's panel, go to the _Apps_ section and create your app in order to get your credentials.
 
-3. Read up on the [authentication](https://tiendanube.docs.apiary.io/#introduction/authentication) to learn how to authenticate and authorize your requests.
+3. Read up on the [authentication](/#introduction/authentication) to learn how to authenticate and authorize your requests.
 
 4. Read the API docs of the desired resources to learn how to retrieve and manipulate the available data.
 
 ## The Basics
 
-This API adheres to the [REST](https://en.wikipedia.org/wiki/Representational_State_Transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
+This API adheres to the [REST](en.wikipedia.org/wiki/Representational_State_Transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
 
 All communication with the API is made through HTTP requests, using headers to specify and retrieve metadata, and [JSON](https://www.json.org/) as the content format.
 
@@ -34,7 +34,9 @@ The API is available under the two following URLs and there is no difference bet
 
 The path is prefixed with the API version and store ID, respectively, which is currently _v1_, so if we change the API in backward-incompatible ways, we'll bump the version marker and maintain stable support for the old URLs.
 
-Finally, **the API version must be suffixed with the requested store ID**, so if you want to access the store with id _123456_ via the API the URL will be `https://api.nuvemshop.com.br/v1/123456` or `https://api.tiendanube.com/v1/123456`.
+Finally, **the API version must be suffixed with the requested store ID**, so if you want to access the store with id _123456_ via the API, you'll use either of the following URLs:
+* `https://api.nuvemshop.com.br/v1/123456`
+* `https://api.tiendanube.com/v1/123456`.
 
 >**Note**: The API is only available over SSL, so you have to specify the protocol (HTTPS) in all URLs.
 
@@ -57,22 +59,22 @@ Finally, **the API version must be suffixed with the requested store ID**, so if
 |`200`| Success. Request completed. |
 |`201`| Success. New resource created. |
 |`204`| Success. No content to return. Only the status code returns. |
-|`400`| Bad Request - [The request could not be parsed](https://tiendanube.docs.apiary.io/#introduction/error-handling/client-errors). |
-|`401`| Unauthorized - User is not logged in, [could not be authenticated](https://tiendanube.docs.apiary.io/#introduction/authentication). |
+|`400`| Bad Request - [The request could not be parsed](/#introduction/error-handling/client-errors). |
+|`401`| Unauthorized - User is not logged in, [could not be authenticated](/#introduction/authentication). |
 |`403`| Forbidden - Cannot access resource. |
 |`404`| Not Found - Resource doesn't exist. |
 |`409`| Conflict - Discord with state of the resource on server. Can occur with too many PUT requests. |
-|`415`| Unsupported Media Type - Your request must include a `Content-type` header. See the [JSON](https://tiendanube.docs.apiary.io/#introduction/the-basics/json) section for more information. |
-|`422`| Unprocessable Entity - [Invalid fields sent](https://tiendanube.docs.apiary.io/#introduction/error-handling/client-errors). |
-|`429`| Too Many Requests - [API rate limits exceeded](https://tiendanube.docs.apiary.io/#introduction/usage-limits). |
-|`500`| [Internal Server Error](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
-|`502`| [Bad gateway](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
-|`503`| [Service unavailable](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
-|`504`| [Gateway timeout](https://tiendanube.docs.apiary.io/#introduction/error-handling/server-errors). |
+|`415`| Unsupported Media Type - Your request must include a `Content-type` header. See the [JSON](/#introduction/the-basics/json) section for more information. |
+|`422`| Unprocessable Entity - [Invalid fields sent](/#introduction/error-handling/client-errors). |
+|`429`| Too Many Requests - [API rate limits exceeded](/#introduction/usage-limits). |
+|`500`| [Internal Server Error](/#introduction/error-handling/server-errors). |
+|`502`| [Bad gateway](/#introduction/error-handling/server-errors). |
+|`503`| [Service unavailable](/#introduction/error-handling/server-errors). |
+|`504`| [Gateway timeout](/#introduction/error-handling/server-errors). |
 
 ### JSON
 
-All data is sent and received as JSON. Our format is to have no root element and we use snake_case to describe attribute keys. This means that you have to send `Content-Type: application/json; charset=utf-8` when POSTing or PUTing data into Tienda Nube/Nuvem Shop.
+All data is sent and received as JSON. Our format has no root element and we use snake_case to describe attribute keys. This means that you have to send `Content-Type: application/json; charset=utf-8` when POSTing or PUTing data into Tienda Nube/Nuvem Shop.
 
 >**Note**: You will receive a `415 Unsupported Media Type` response code if you leave out the Content-Type header.
 
@@ -88,8 +90,10 @@ To check the total count of the results you can use the `X-Total-Count` header t
 To check the next and previous links for pagination you can use the `Link` header:
 
 ```
-    Link: <https://api.tiendanube.com/v1/123456/products?page=3&per_page=100>; rel="next", 
-    <https://api.tiendanube.com/v1/123456/products?page=50&per_page=100>; rel="last"
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=UTF-8
+    X-Total-Count: 5000
+    Link: <https://api.tiendanube.com/v1/123456/products?page=3&per_page=100>; rel="next", <https://api.tiendanube.com/v1/123456/products?page=50&per_page=100>; rel="last"
 ```
 
 The possible `rel` values are:
@@ -202,6 +206,8 @@ HTTP/1.1 400 Bad Request
 Content-Length: 34
 {"error": "Problems parsing JSON"}
 ```
+
+> **Note**: Missing a parenthesis? Try [this](https://jsonlint.com/) validator.
 
 * Sending invalid fields will result in a `422 Unprocessable Entity` response.
 ```
