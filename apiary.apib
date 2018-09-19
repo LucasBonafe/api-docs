@@ -114,11 +114,14 @@ We follow the OAuth 2 framework for letting users authorize their applications t
 We provide authorization and user authentication by a restricted form of OAuth 2. At a glance:
 * The only grant type we support is the "authorization code".
 * Our access tokens don't expire. They become invalid only after you get a new one, or if the user uninstalls your app.
-* Along with the access token we provide a `user_id`, which is the ID of the store. **You need the user_id for making requests to our API**. It is also useful for authenticating app users on your website (see [User Authentication](https://tiendanube.docs.apiary.io/#introduction/authentication/user-authentication)).
+* Along with the access token we provide a `user_id`, which is the ID of the store. **You need the user_id to make requests to our API**. It is also useful for authenticating app users on your website (see [User Authentication](/#introduction/authentication/user-authentication)).
 
 ### Introduction
 
-When creating an app, you will have to select the scopes it needs and set a redirection URL. The scopes specify the resources for which the app is asking authorization of its users (see [Scopes](https://tiendanube.docs.apiary.io/#introduction/authentication/scopes)). The redirection URL is used as part of the authorization flow (see [Authorization Flow](https://tiendanube.docs.apiary.io/#introduction/authentication/authorization-flow)).
+When creating an app, you will have to select the scopes it needs and set a redirection URL.
+
+* The scopes specify the resources for which the app is asking authorization of its users (see [Scopes](/#introduction/authentication/scopes)).
+* The redirection URL is used as part of the authorization flow (see [Authorization Flow](/#introduction/authentication/authorization-flow)).
 
 ### Authorization Flow
 
@@ -126,7 +129,7 @@ The authorization flow is as follows:
 1. Users, from their TiendaNube/NuvemShop admin shop, select your app to install it. Or, alternatively, they go to `https://www.tiendanube.com/apps/(app_id)/authorize` (if they are not logged in, they will be prompted to do so).
 2. Users are then redirected to a website where they have to authorize the scopes your app needs (if they have already done this, the step is skipped).
 3. Finally, users are redirected to your app's redirection URL with an authorization code.
-4. Using your app's credentials and the authorization code, you can obtain an access token by making a POST request to `https://www.tiendanube.com/apps/authorize/token`. (Don't forget to also send `grant_type=authorization_code`, see the example below).
+4. Using your app's credentials and the authorization code, you can obtain an access token by making a POST request to `https://www.tiendanube.com/apps/authorize/token`. (Don't forget to also send `grant_type=authorization_code` - see the example provided below).
 
 > **Note**: Any of these URLs in the tiendanube.com domain can be replaced for identical ones in the nuvemshop.com.br domain or vice versa.
 
@@ -138,7 +141,7 @@ The authorization flow is as follows:
     * scopes = `read_orders`, `write_products`
     * client_secret = abcdef
 
-The user then follows these steps:
+The user will then follows these steps:
 1. User with ID 789 goes to `https://www.tiendanube.com/apps/123/authorize?state=csrf-code`
 2. User accepts scopes.
 3. User gets redirected to `https://www.example.com/?code=xyz&state=csrf-code`
@@ -157,7 +160,7 @@ Finally, you receive the following information:
 
 ### Scopes
 
-Apps should only ask for the access scopes they need. If an app only needs to read products, it should only ask for the `read_products` scope.
+Apps should only ask for the access scopes they need. For example, if an app only needs to read products, it should only ask for the `read_products` scope.
 
 >**Note**: If you ask for any write scope, the read scope is implied.
 
@@ -185,11 +188,11 @@ The available `scopes` are:
 Should you need your app's users to be able to sign-in on your website, you can reuse the Authorization flow for this purpose:
 * The login button should be a link to: https://www.tiendanube.com/apps/(app_id)/authorize
 * You can sign-in the user with the ID you receive with the new access token.
->**Note**: We [recommend](https://tools.ietf.org/html/rfc6749#section-10.12) you add a `state` parameter for CSRF protection (e.g. a hash of the session cookie), and check it after the redirection.
+>**Note**: We [recommend](https://tools.ietf.org/html/rfc6749#section-10.12) you add a `state` parameter for CSRF protection (e.g. a hash of the session cookie), so you may verify it after the redirection.
 
 ### Identify Your App
 
-In every API request you _must_ include a `User-Agent` header with the name of your application and a link to it, or your email address so we can get in touch with you. Here are some examples:
+In every API request you *must* include a `User-Agent` header with the name of your application and a link to it, or your email address so we can get in touch with you. Here are some examples:
 * `User-Agent: Super app (http://superapp.com/contact)`
 * `User-Agent: Awesome app (awesome@app.com)`
 >**Note**: If you don't supply this header, you will get a `400 Bad Request` response.
@@ -207,6 +210,7 @@ Content-Length: 34
 {"error": "Problems parsing JSON"}
 ```
 
+> **Note**: Did you make an API request without the `User-Agent` [header](/#introduction/authentication/identify-your-app)?
 > **Note**: Missing a parenthesis? Try [this](https://jsonlint.com/) validator.
 
 * Sending invalid fields will result in a `422 Unprocessable Entity` response.
@@ -226,11 +230,11 @@ If Nuvem Shop/Tienda Nube is having trouble, you might see a 5xx error. `500 Int
 
 ## Usage Limits
 
-You can perform up to 500 requests per 5 minutes period from the same app to the same store. If you exceed this limit, you'll get a `429 Too Many Requests` response for subsequent requests. We use the following headers to provide information:
+You can perform up to 500 requests in a 5 minute period from the same app to the same store. If you exceed this limit, you'll get a `429 Too Many Requests` response for subsequent requests. We use the following headers to provide information:
 
-* `X-Rate-Limit-Limit`: Total requests that con be done in a given period.
+* `X-Rate-Limit-Limit`: Total requests that can be done in a given period.
 * `X-Rate-Limit-Remaining`: Remaining requests in the current period.
-* `X-Rate-Limit-Reset`: Remaining seconds for the start of the next period.
+* `X-Rate-Limit-Reset`: Remaining seconds until the start of the next period.
 
 ## Front-end Integration
 
@@ -242,11 +246,11 @@ While support for this is still being improved, there is one single event you ma
 
 Being a monthly subscription service, it's possible that a store will not renew its service. In this case, the store will go offline and the API will be inaccessible. The API will also be inaccessible if the app has a recurring price and it's not paid in time.
 
-In either case, all API calls will return a `402 Payment Required` response, Scripts will not be included and Webhooks will not be called. Please make sure you handle this error code to notify the user that he needs to resume his payment instead of displaying a generic server error.
+In either case, all API calls will return a `402 Payment Required` response. Scripts will not be included and Webhooks will not be called. Please make sure you handle this error code to notify the user that he needs to resume his payment instead of displaying a generic server error.
 
 Once the required payment is made, the API becomes accessible again.
 
->**Note**: If your app needs to know when access to the API is suspended or resumed (because you may have missed a webhook and want to do a full resync, for example), you can register to the app/suspended and app/resumed events using a Webhook.
+>**Note**: If your app needs to know when access to the API is suspended or resumed (because you may have missed a webhook and want to do a full resync, for example), you can register to the app/suspended and app/resumed events using a [Webhook](/#reference/webhook).
 
 # Group Store
 
