@@ -9,7 +9,7 @@ This is the official documentation for the Nuvem Shop / Tienda Nube public API, 
 
 Before you start to code your app integration, you will need to:
 
-1. Sign-up for a partner account at [Nuvem Shop](http://www.nuvemshop.com.br/parceiros) or [Tienda Nube](tiendanube.com/partners).
+1. Sign-up for a partner account at [Nuvem Shop](http://www.nuvemshop.com.br/parceiros) or [Tienda Nube](https://www.tiendanube.com/partners).
 
 2. Once inside your partner's panel, go to the _Apps_ section and create your app in order to get your credentials.
 
@@ -19,7 +19,7 @@ Before you start to code your app integration, you will need to:
 
 ## The Basics
 
-This API adheres to the [REST](en.wikipedia.org/wiki/Representational_State_Transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
+This API adheres to the [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) architectural constraints. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors.
 
 All communication with the API is made through HTTP requests, using headers to specify and retrieve metadata, and [JSON](https://www.json.org/) as the content format.
 
@@ -211,7 +211,7 @@ Content-Length: 34
 ```
 
 > **Note**: Did you make an API request without the `User-Agent` [header](/#introduction/authentication/identify-your-app)?
-> **Note**: Missing a parenthesis? Try [this](https://jsonlint.com/) validator.
+> **Note**: Missing a parenthesis? Try [this JSON validator](https://jsonlint.com/).
 
 * Sending invalid fields will result in a `422 Unprocessable Entity` response.
 ```
@@ -391,8 +391,8 @@ A [Product](/#reference/product/managing-products-examples-and-resources) is an 
     + published (string) - `true` if the Product is published in the store. `false` if the Product will not show up on the store.
     + attributes (string) - List of the names of the attributes whose values define the variants. E.g.: Color, Size, etc.
     + tags (string) - String with all the Product's tags, separated by commas.
-    + `created_at` (string) - Date when the Product was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
-    + `updated_at` (string) - Date when the Product was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `created_at` (string) - Date when the Product was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
 
 ### Retrieve A List Of All The Stores' Products [GET /{store_id}/products/{?since_id,language,q,handle,category_id,published,free_shipping,created_at_min,created_at_max,updated_at_min,updated_at_max,sort_by,page,per_page,fields}]
 
@@ -917,8 +917,8 @@ A [Product](/#reference/product/managing-products-examples-and-resources) is an 
     + depth (string) - Depth of the Product Variant in centimetres.
     + sku (string) - Unique identifier of the Product Variant in your store.
     + values (string) - List of the values of the attributes whose values define the variant. E.g.: Large, Medium, etc.
-    + `created_at` (string) - Date when the Product Variant was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
-    + `updated_at` (string) - Date when the Product Variant was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `created_at` (string) - Date when the Product Variant was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product Variant was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
 
 ### Retrieve A List Of All Product Variants For A Given Product [GET /products/#{product_id}/variants/{?since_id,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
 
@@ -1124,8 +1124,8 @@ A [Product](/#reference/product/managing-products-examples-and-resources) is an 
     + product_id (number) - The id of the product associated with the image.
     + src (string) - URL of the product image.
     + position (number) - Number indicating the position of the image in the product's image list. 1 is the first and the main Product Image.
-    + `created_at` (string) - Date when the Product Image was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
-    + `updated_at` (string) - Date when the Product Image was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `created_at` (string) - Date when the Product Image was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Product Image was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
 
 ### Retrieve A List Of All Product Images For A Given Product [GET /products/#{product_id}/images/{?since_id,src,position,page,per_page,fields}]
 
@@ -1250,8 +1250,8 @@ A Category lets the store owner group their products to make the store easier to
     + handle (string) - List of the url-friendly strings generated from the Category's names, in every language supported by the store.
     + parent (string) - Id of the Category's parent. `null` if it has no parent.
     + subcategories (string) - The ids of the Category's first level subcategories.
-    + `created_at` (string) - Date when the Category was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
-    + `updated_at` (string) - Date when the Category was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `created_at` (string) - Date when the Category was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Category was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
 
 ### Retrieve A List Of All Categories [GET /categories/{?since_id,language,handle,parent_id,created_at_min,created_at_max,updated_at_min,updated_at_max,page,per_page,fields}]
 
@@ -1425,8 +1425,8 @@ An order is created when a customer completes the checkout process. Orders can't
 Orders contain 3 important fields that are detailed below. These are `products`, `next_action` and `issues`:
 
 * `products`
-    * `product_id` - [Product]() purchased.
-    * `variant_id` - [Product Variant]() purchased.
+    * `product_id` - [Product](/#reference/product) purchased.
+    * `variant_id` - [Product Variant](/#reference/product) purchased.
     * `name` - Product's name at the time of purchase.
     * `price` - Product's price at the time of purchase.
     * `quantity` - Quantity purchased.
@@ -1457,7 +1457,7 @@ Orders contain 3 important fields that are detailed below. These are `products`,
 + Attributes
     + id (number) - The unique numeric identifier for the Order. It's different from `number`.
     + token (string) - Specifies the location of the Order.
-    + number (string) - Unique numberc identifier for an Order used by the shop owner and customers. It's sequential and starts at 100.
+    + number (string) - Unique number identifier for an Order used by the shop owner and customers. It's sequential and starts at 100.
     + customer (string) - [Customer](/#reference/customer) that purchased this Order. Only given if the 'read_customers' scope is set for the app.
     + products - List of the products purchased by the `customer`. Contents are explained [above](/#reference/order) and values hold are the ones corresponding to the time the products were purchased.
     + note (string) - Customer's note about the order.
@@ -1467,7 +1467,7 @@ Orders contain 3 important fields that are detailed below. These are `products`,
     + subtotal (string) - Price of the order before shipping.
     + total (string) - Total price of the order including shipping and discounts.
     + total_usd (string) - Total price of the order in US dollars.
-    + currency (string) - The total spent's currency in [ISO 4217 format](en.wikipedia.org/wiki/ISO_4217).
+    + currency (string) - The total spent's currency in [ISO 4217 format](https://en.wikipedia.org/wiki/ISO_4217).
     + language (string) - Order's language used by the customer during the checkout process.
     + gateway (string) - The payment gateway used.
     + shipping (string) - The shipping method used.
@@ -1487,16 +1487,16 @@ Orders contain 3 important fields that are detailed below. These are `products`,
     + billing_city (string) - Billing city for the order.
     + billing_province (string) - Billing province for the order.
     + billing_country (string) - Billing country code for the order.
-    + extra (string) - A JSON object containing custom information. Can be set via the API or through custom form fields of name "extra[key]" on the cart's checkout form in the storefront.
+    + extra (string) - A JSON object containing custom information. Can be set via the API or through custom form fields of name `extra[key]` on the cart's checkout form in the storefront.
     + weight (string) - Order's total weight, in kilograms.
-    + status (string) - Order's status. Possible values are "open", "closed" or "cancelled".
+    + status (string) - Order's status. Possible values are "`open`", "`closed`" or "`cancelled`".
     + payment_status (string) - Order's payment status. Possible values are "authorized", "pending", "paid", "abandoned", "refunded" or "voided".
     + shipping_status (string) - Order's shipping status. Possible values are "unpacked", "shipped" or "unshipped".
     + next_action (string) - Next available operation in the orders flow.
-    + `shipped_at` (string) - Date when the Order was shipped in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `shipped_at` (string) - Date when the Order was shipped in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
     + cancel_reason (string) - Reason why the store owner cancelled an Order. Possible values are "customer", "fraud", "inventory" or "other".
-    + `created_at` (string) - Date when the Order was created in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
-    + `updated_at` (string) - Date when the Order was last updated in [ISO 8601 format](en.wikipedia.org/wiki/ISO_8601).
+    + `created_at` (string) - Date when the Order was created in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
+    + `updated_at` (string) - Date when the Order was last updated in [ISO 8601 format](https://en.wikipedia.org/wiki/ISO_8601).
     + next_action - Specifies the next action to take by the Order. Contents are explained [above](/#reference/order).
 
 ### Retrieve A List Of All Orders [GET /orders/{?since_id,status,payment_status,shipping_status,created_at_min,created_at_max,updated_at_min,updated_at_max,total_min,total_max,customer_ids,page,per_page,fields,q}]
